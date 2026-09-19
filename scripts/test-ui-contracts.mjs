@@ -6,6 +6,7 @@ const css = readFileSync(new URL("../src/app/globals.css", import.meta.url), "ut
 const uiIndex = readFileSync(new URL("../src/components/ui/index.ts", import.meta.url), "utf8");
 const iconButton = readFileSync(new URL("../src/components/ui/IconButton.tsx", import.meta.url), "utf8");
 const modalShell = readFileSync(new URL("../src/components/ui/ModalShell.tsx", import.meta.url), "utf8");
+const home = readFileSync(new URL("../src/app/page.tsx", import.meta.url), "utf8");
 
 test("defines the shared semantic design tokens", () => {
   for (const token of [
@@ -44,4 +45,11 @@ test("requires accessible labels for icon buttons and dialogs", () => {
   assert.match(modalShell, /role="dialog"/);
   assert.match(modalShell, /aria-modal="true"/);
   assert.match(modalShell, /aria-labelledby=\{labelledBy\}/);
+});
+
+test("home has one primary action and a cardless process flow", () => {
+  assert.equal((home.match(/variant:\s*"primary"/g) ?? []).length, 1);
+  assert.match(home, /aria-label="Cách tạo hành trình"/);
+  assert.match(home, /<ol/);
+  assert.doesNotMatch(home, /grid-cols-3/);
 });

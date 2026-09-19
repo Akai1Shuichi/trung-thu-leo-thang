@@ -1,130 +1,153 @@
 import Link from "next/link";
-import { Sparkles, Play, PlusCircle, Zap, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Gift,
+  Link2,
+  PenLine,
+  Play,
+  Send,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
+import { Badge, buttonClassName } from "@/components/ui";
+
+const journeySteps = [
+  {
+    number: "01",
+    icon: PenLine,
+    title: "Tạo chặng leo",
+    description: "Chọn nhịp chơi và người bạn muốn gửi tặng.",
+  },
+  {
+    number: "02",
+    icon: Gift,
+    title: "Giấu điều bất ngờ",
+    description: "Đặt lời nhắn hoặc câu đố dọc đường lên trăng.",
+  },
+  {
+    number: "03",
+    icon: Send,
+    title: "Gửi một đường link",
+    description: "Người nhận mở link và bắt đầu hành trình ngay.",
+  },
+];
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#090518] via-[#1b1035] to-[#0d0a20] text-white flex flex-col items-center justify-between p-4 sm:p-6 relative overflow-hidden">
-      {/* Hiệu ứng ánh trăng và đèn lồng phía sau */}
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/3 -left-32 w-80 h-80 bg-rose-600/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-20 right-10 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+    <main className="app-shell relative isolate flex min-h-[100svh] flex-col overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 -z-10 opacity-60" aria-hidden="true">
+        <span className="absolute left-[12%] top-[22%] size-1 rounded-full bg-moon-50 shadow-[0_0_18px_4px_rgba(255,249,234,.4)]" />
+        <span className="absolute left-[46%] top-[14%] size-1 rounded-full bg-gold-300" />
+        <span className="absolute bottom-[24%] right-[12%] size-1.5 rounded-full bg-moon-50" />
+        <span className="absolute right-[30%] top-[42%] size-1 rounded-full bg-gold-300" />
+      </div>
 
-      {/* Đèn lồng treo trang trí hai góc trên */}
-      <div className="absolute top-0 left-6 sm:left-12 flex items-start gap-4 pointer-events-none z-20">
-        <div className="flex flex-col items-center animate-lanternSwing">
-          <div className="w-0.5 h-12 bg-amber-500/60" />
-          <div className="w-9 h-11 bg-rose-600 rounded-lg border border-amber-300 shadow-lg shadow-rose-600/40 relative flex items-center justify-center">
-            <span className="text-[10px] text-amber-200 font-bold">福</span>
-            <div className="absolute -bottom-3 w-0.5 h-3 bg-amber-400" />
+      <div className="pointer-events-none absolute left-6 top-0 hidden sm:block" aria-hidden="true">
+        <div className="lantern-swing flex flex-col items-center">
+          <div className="h-14 w-px bg-gold-500/45" />
+          <div className="relative h-12 w-9 rounded-[12px] border border-gold-300/50 bg-danger-600 shadow-[0_8px_34px_rgba(201,71,80,.28)]">
+            <div className="absolute inset-x-1 top-1/2 h-px bg-gold-300/55" />
+            <div className="absolute -bottom-3 left-1/2 h-3 w-px -translate-x-1/2 bg-gold-400" />
           </div>
         </div>
       </div>
 
-      <div className="absolute top-0 right-6 sm:right-12 flex items-start gap-4 pointer-events-none z-20">
-        <div className="flex flex-col items-center animate-lanternSwing" style={{ animationDelay: "0.6s" }}>
-          <div className="w-0.5 h-16 bg-amber-500/60" />
-          <div className="w-8 h-10 bg-amber-500 rounded-lg border border-yellow-200 shadow-lg shadow-amber-500/40 relative flex items-center justify-center">
-            <span className="text-[10px] text-amber-950 font-bold">安</span>
-            <div className="absolute -bottom-3 w-0.5 h-3 bg-amber-300" />
-          </div>
-        </div>
-      </div>
-
-      {/* Container Nội dung Chính */}
-      <div className="w-full max-w-lg my-auto py-8 z-10 flex flex-col items-center">
-        {/* Vầng Cung Trăng & Mascot Cuội */}
-        <div className="relative mb-6">
-          <div className="w-32 h-32 sm:w-36 sm:h-36 bg-gradient-to-tr from-amber-400 via-yellow-200 to-amber-100 rounded-full flex items-center justify-center shadow-2xl shadow-yellow-500/40 border-4 border-yellow-100/90 relative animate-pulse">
-            <div className="text-6xl sm:text-7xl transform hover:scale-110 transition-transform select-none cursor-pointer">
-              🌕
-            </div>
-          </div>
-          {/* Mascot Cuội tròn bông gòn mini bên cạnh trăng */}
-          <div className="absolute -bottom-2 -right-4 bg-white/95 px-3 py-1.5 rounded-2xl shadow-xl border-2 border-amber-300 flex items-center gap-1.5 animate-bounce">
-            <span className="text-lg">🏮</span>
-            <span className="text-xs font-black text-amber-950">Chú Cuội ☁️</span>
-          </div>
-        </div>
-
-        {/* Huy hiệu Trung Thu */}
-        <div className="inline-flex items-center gap-1.5 px-4 py-1 bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-400/40 rounded-full text-amber-300 text-xs font-extrabold mb-3 uppercase tracking-wider backdrop-blur-md">
-          <Sparkles className="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
-          <span>Web Mini-Game Trung Thu Việt Nam</span>
-        </div>
-
-        {/* Tiêu đề chính */}
-        <h1 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-400 text-center mb-3 tracking-tight">
-          Cuội Leo Cung Trăng
-        </h1>
-
-        {/* Mô tả ngắn */}
-        <p className="text-sm text-slate-200/90 text-center leading-relaxed max-w-md mb-8">
-          Tự tạo một chặng leo thang lên Cung Trăng, giấu những hộp quà bất ngờ và gửi gắm lời chúc Trung Thu ấm áp đến người bạn yêu thương!
-        </p>
-
-        {/* 3 Bước hoạt động đơn giản */}
-        <div className="w-full grid grid-cols-3 gap-2.5 mb-8">
-          <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 text-center flex flex-col items-center">
-            <div className="w-8 h-8 rounded-full bg-amber-400/20 flex items-center justify-center text-sm mb-1.5">
-              🪜
-            </div>
-            <span className="text-[11px] font-bold text-amber-200">1. Tạo thang</span>
-            <p className="text-[10px] text-slate-300/80 mt-0.5">Chọn bậc & độ khó</p>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 text-center flex flex-col items-center">
-            <div className="w-8 h-8 rounded-full bg-rose-400/20 flex items-center justify-center text-sm mb-1.5">
-              🎁
-            </div>
-            <span className="text-[11px] font-bold text-amber-200">2. Giấu quà</span>
-            <p className="text-[10px] text-slate-300/80 mt-0.5">Viết lời nhắn bí mật</p>
-          </div>
-
-          <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 text-center flex flex-col items-center">
-            <div className="w-8 h-8 rounded-full bg-emerald-400/20 flex items-center justify-center text-sm mb-1.5">
-              🔗
-            </div>
-            <span className="text-[11px] font-bold text-amber-200">3. Gửi link</span>
-            <p className="text-[10px] text-slate-300/80 mt-0.5">Mở là chơi ngay</p>
-          </div>
-        </div>
-
-        {/* Nút hành động chính (CTAs) */}
-        <div className="w-full space-y-3">
-          <Link
-            href="/create"
-            className="w-full py-4 px-6 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-black text-base rounded-2xl shadow-xl shadow-orange-500/30 flex items-center justify-center gap-2.5 transition transform cursor-pointer"
-          >
-            <PlusCircle className="w-5 h-5" />
-            <span>Tự Tạo Game Gửi Tặng</span>
-          </Link>
-
-          <Link
-            href="/play"
-            className="w-full py-3.5 px-6 bg-white/15 hover:bg-white/20 border border-amber-300/30 active:scale-95 text-amber-200 font-bold text-sm rounded-2xl flex items-center justify-center gap-2 transition cursor-pointer backdrop-blur-md shadow-md"
-          >
-            <Play className="w-4 h-4 fill-amber-200" />
-            <span>Chơi Thử Màn Mẫu (80 bậc)</span>
-          </Link>
-        </div>
-
-        {/* Cam kết không backend */}
-        <div className="mt-8 pt-4 border-t border-white/10 text-xs text-amber-200/70 flex items-center justify-center gap-4 flex-wrap">
-          <span className="flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>100% Không cần đăng nhập</span>
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
+        <Link href="/" className="focus-ring flex items-center gap-3 rounded-lg" aria-label="Cuội Leo Cung Trăng — trang chủ">
+          <span className="flex size-9 items-center justify-center rounded-full bg-gold-500 text-lg shadow-[0_0_30px_rgba(233,166,47,.28)]">
+            🌕
           </span>
-          <span>•</span>
-          <span className="flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span>Lưu trọn vẹn trong URL</span>
-          </span>
-        </div>
-      </div>
+          <span className="text-sm font-bold tracking-[0.08em] text-moon-50">CUỘI · MOON CLIMB</span>
+        </Link>
+        <Link
+          href="/play"
+          className="focus-ring hidden min-h-11 items-center gap-2 rounded-[var(--radius-sm)] px-3 text-sm font-semibold text-moon-100 transition-colors hover:bg-white/8 sm:inline-flex"
+        >
+          <Play className="size-4" />
+          Chơi thử
+        </Link>
+      </header>
 
-      {/* Footer */}
-      <footer className="text-center text-[11px] text-slate-400/60 pb-2 z-10">
-        Trung Thu Moon Climb • Chúc bạn mùa Tết Đoàn Viên ấm áp ❤️
+      <section className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-5 pb-12 pt-5 sm:px-8 sm:pt-10 lg:grid-cols-[1.05fr_.95fr] lg:gap-16 lg:px-10 lg:py-12">
+        <div className="ui-enter max-w-2xl">
+          <Badge className="mb-5">
+            <Sparkles className="size-3.5" />
+            Một món quà Trung Thu có thể chơi
+          </Badge>
+          <h1 className="max-w-xl text-4xl font-extrabold leading-[1.04] tracking-[-0.045em] text-moon-50 sm:text-5xl lg:text-6xl">
+            Cùng Cuội leo qua một đêm trăng dành riêng cho bạn.
+          </h1>
+          <p className="mt-5 max-w-lg text-base leading-7 text-moon-100/72 sm:text-lg">
+            Tạo chặng leo, giấu lời chúc và gửi cả hành trình Trung Thu trong một đường link.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/create"
+              className={buttonClassName({ variant: "primary", size: "lg", className: "group" })}
+            >
+              Tạo hành trình của bạn
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+            <Link
+              href="/play"
+              className={buttonClassName({ variant: "secondary", size: "lg" })}
+            >
+              <Play className="size-4 fill-current" />
+              Chơi màn mẫu
+            </Link>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-moon-100/58">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="size-4 text-gold-400" />
+              Không cần đăng nhập
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Link2 className="size-4 text-gold-400" />
+              Lưu trọn vẹn trong URL
+            </span>
+          </div>
+        </div>
+
+        <div className="relative mx-auto flex w-full max-w-md items-center justify-center py-5 sm:py-10 lg:max-w-none" aria-hidden="true">
+          <div className="absolute size-64 rounded-full border border-gold-300/10 sm:size-80" />
+          <div className="absolute size-52 rounded-full border border-gold-300/16 sm:size-64" />
+          <div className="moon-float relative flex size-44 items-center justify-center rounded-full border border-white/60 bg-[radial-gradient(circle_at_35%_30%,#fffdf2_0%,#f8df99_38%,#e9a62f_100%)] shadow-[0_0_90px_24px_rgba(233,166,47,.22)] sm:size-56">
+            <span className="absolute left-[25%] top-[28%] size-8 rounded-full bg-gold-600/10 blur-[1px]" />
+            <span className="absolute bottom-[26%] right-[20%] size-11 rounded-full bg-gold-700/10 blur-[1px]" />
+            <span className="text-6xl drop-shadow-lg sm:text-7xl">☁️</span>
+          </div>
+          <div className="night-surface absolute bottom-1 right-1 px-4 py-3 sm:bottom-8 sm:right-3">
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-gold-300/70">Đích đến</p>
+            <p className="mt-0.5 text-sm font-semibold text-moon-50">Một lời chúc thật riêng</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-white/8 bg-night-950/28">
+        <ol
+          aria-label="Cách tạo hành trình"
+          className="mx-auto flex w-full max-w-6xl flex-col divide-y divide-white/10 px-5 sm:px-8 md:flex-row md:divide-x md:divide-y-0 lg:px-10"
+        >
+          {journeySteps.map(({ number, icon: Icon, title, description }) => (
+            <li key={number} className="flex gap-4 py-5 md:flex-1 md:px-6 md:first:pl-0 md:last:pr-0">
+              <div className="pt-0.5 text-gold-400">
+                <Icon className="size-5" />
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold tracking-[0.16em] text-gold-400/62">{number}</p>
+                <h2 className="mt-1 text-sm font-bold text-moon-50">{title}</h2>
+                <p className="mt-1 text-xs leading-5 text-moon-100/56">{description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <footer className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-5 py-5 text-xs text-moon-100/38 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
+        <span>Cuội Leo Cung Trăng</span>
+        <span>Gửi nhau một mùa đoàn viên thật vui.</span>
       </footer>
     </main>
   );
