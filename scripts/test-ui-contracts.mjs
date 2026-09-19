@@ -12,6 +12,7 @@ const play = readFileSync(new URL("../src/app/play/page.tsx", import.meta.url), 
 const kama = readFileSync(new URL("../src/components/KamaBar.tsx", import.meta.url), "utf8");
 const giftModal = readFileSync(new URL("../src/components/GiftModal.tsx", import.meta.url), "utf8");
 const victoryModal = readFileSync(new URL("../src/components/VictoryModal.tsx", import.meta.url), "utf8");
+const buttonSource = readFileSync(new URL("../src/components/ui/Button.tsx", import.meta.url), "utf8");
 
 test("defines the shared semantic design tokens", () => {
   for (const token of [
@@ -90,4 +91,17 @@ test("quiz feedback is announced without relying only on color", () => {
   assert.match(giftModal, /aria-live="polite"/);
   assert.match(giftModal, /CheckCircle2/);
   assert.match(giftModal, /XCircle/);
+});
+
+test("secondary actions inherit readable text color from their surface", () => {
+  assert.match(buttonSource, /secondary:\s*\n?\s*"[^"]*text-current[^"]*"/);
+});
+
+test("creator does not place the dark neutral badge treatment on a light surface", () => {
+  assert.doesNotMatch(creator, /item\.type === "quiz" \? "gold" : "neutral"/);
+});
+
+test("small home footer text keeps readable contrast", () => {
+  assert.doesNotMatch(home, /text-moon-100\/38/);
+  assert.match(home, /text-moon-100\/60/);
 });

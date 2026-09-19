@@ -644,7 +644,7 @@ export const GameCreator: React.FC = () => {
                         />
                       </div>
 
-                      <Badge tone={item.type === "quiz" ? "gold" : "neutral"} className="border-ink-900/10 bg-white text-ink-600">
+                      <Badge tone={item.type === "quiz" ? "gold" : "success"}>
                         {item.type === "quiz" ? (
                           <>
                             <HelpCircle className="size-3" />

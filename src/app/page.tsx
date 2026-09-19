@@ -145,7 +145,7 @@ export default function HomePage() {
         </ol>
       </section>
 
-      <footer className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-5 py-5 text-xs text-moon-100/38 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
+      <footer className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-5 py-5 text-xs text-moon-100/60 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
         <span>Cuội Leo Cung Trăng</span>
         <span>Gửi nhau một mùa đoàn viên thật vui.</span>
       </footer>
