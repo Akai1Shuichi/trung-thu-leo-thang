@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
 import { Check, PlusCircle, RotateCcw, Share2, Sparkles } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge, Button, ModalShell, Panel, buttonClassName } from "@/components/ui";
+import { COMMUNITY_LINKS } from "@/components/Footer";
 
 interface VictoryModalProps {
   message: string;
@@ -101,6 +103,35 @@ export function VictoryModal({ message, receiverName, creatorName, onReplay }: V
           <PlusCircle className="size-4 text-gold-600" />
           <span>Tự tạo game gửi tặng</span>
         </Link>
+      </div>
+
+      <div className="mt-5 border-t border-ink-900/10 pt-4 text-center">
+        <p className="mb-2 text-xs font-semibold text-ink-700">
+          Tham gia cộng đồng Bộ Tộc IT 🌕
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <a
+            href={COMMUNITY_LINKS.zalo}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-ink-900/15 bg-white/80 px-2.5 py-1.5 text-xs font-medium text-ink-900 shadow-sm transition hover:border-gold-500/50 hover:bg-white"
+          >
+            <Image src="/zalo.svg" alt="Zalo" width={18} height={18} className="size-4 rounded" />
+            <span>Nhóm Zalo</span>
+          </a>
+          <a
+            href={COMMUNITY_LINKS.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-ink-900/15 bg-white/80 px-2.5 py-1.5 text-xs font-medium text-ink-900 shadow-sm transition hover:border-gold-500/50 hover:bg-white"
+          >
+            <Image src="/facebook.svg" alt="Facebook" width={18} height={18} className="size-4 rounded" />
+            <span>Nhóm Facebook</span>
+          </a>
+        </div>
+        <p className="mt-2.5 text-[11px] font-semibold text-ink-600">
+          {COMMUNITY_LINKS.credit}
+        </p>
       </div>
     </ModalShell>
   );

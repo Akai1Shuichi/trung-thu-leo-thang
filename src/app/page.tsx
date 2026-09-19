@@ -10,25 +10,23 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Badge, buttonClassName } from "@/components/ui";
+import { Footer } from "@/components/Footer";
 
 const journeySteps = [
   {
     number: "01",
     icon: PenLine,
     title: "Tạo chặng leo",
-    description: "Chọn nhịp chơi và người bạn muốn gửi tặng.",
   },
   {
     number: "02",
     icon: Gift,
     title: "Giấu điều bất ngờ",
-    description: "Đặt lời nhắn hoặc câu đố dọc đường lên trăng.",
   },
   {
     number: "03",
     icon: Send,
     title: "Gửi một đường link",
-    description: "Người nhận mở link và bắt đầu hành trình ngay.",
   },
 ];
 
@@ -118,10 +116,6 @@ export default function HomePage() {
             <span className="absolute bottom-[26%] right-[20%] size-11 rounded-full bg-gold-700/10 blur-[1px]" />
             <span className="text-6xl drop-shadow-lg sm:text-7xl">☁️</span>
           </div>
-          <div className="night-surface absolute bottom-1 right-1 px-4 py-3 sm:bottom-8 sm:right-3">
-            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-gold-300/70">Đích đến</p>
-            <p className="mt-0.5 text-sm font-semibold text-moon-50">Một lời chúc thật riêng</p>
-          </div>
         </div>
       </section>
 
@@ -130,7 +124,7 @@ export default function HomePage() {
           aria-label="Cách tạo hành trình"
           className="mx-auto flex w-full max-w-6xl flex-col divide-y divide-white/10 px-5 sm:px-8 md:flex-row md:divide-x md:divide-y-0 lg:px-10"
         >
-          {journeySteps.map(({ number, icon: Icon, title, description }) => (
+          {journeySteps.map(({ number, icon: Icon, title }) => (
             <li key={number} className="flex gap-4 py-5 md:flex-1 md:px-6 md:first:pl-0 md:last:pr-0">
               <div className="pt-0.5 text-gold-400">
                 <Icon className="size-5" />
@@ -138,17 +132,13 @@ export default function HomePage() {
               <div>
                 <p className="text-[11px] font-semibold tracking-[0.16em] text-gold-400/62">{number}</p>
                 <h2 className="mt-1 text-sm font-bold text-moon-50">{title}</h2>
-                <p className="mt-1 text-xs leading-5 text-moon-100/56">{description}</p>
               </div>
             </li>
           ))}
         </ol>
       </section>
 
-      <footer className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-5 py-5 text-xs text-moon-100/60 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-        <span>Cuội Leo Cung Trăng</span>
-        <span>Gửi nhau một mùa đoàn viên thật vui.</span>
-      </footer>
+      <Footer />
     </main>
   );
 }

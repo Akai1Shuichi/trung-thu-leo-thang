@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { GameCreator } from "@/components/GameCreator";
+import { Footer } from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { buttonClassName } from "@/components/ui";
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 
 export default function CreatePage() {
   return (
-    <main className="app-shell relative min-h-[100svh] overflow-hidden px-4 py-6 sm:px-6 sm:py-10">
+    <main className="app-shell relative flex min-h-[100svh] flex-col justify-between overflow-hidden">
       <div className="pointer-events-none absolute right-[8%] top-[-9rem] size-80 rounded-full bg-gold-500/10 blur-3xl" />
-      <div className="relative z-10 mx-auto w-full max-w-[720px]">
+      <div className="relative z-10 mx-auto w-full max-w-[720px] px-4 py-6 sm:px-6 sm:py-10">
         <Link
           href="/"
           className={buttonClassName({ variant: "ghost", size: "sm", className: "mb-4 text-moon-100" })}
@@ -23,6 +24,7 @@ export default function CreatePage() {
         </Link>
         <GameCreator />
       </div>
+      <Footer className="relative z-10 mt-10" />
     </main>
   );
 }

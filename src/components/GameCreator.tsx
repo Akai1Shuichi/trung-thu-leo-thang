@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import Image from "next/image";
+import { COMMUNITY_LINKS } from "@/components/Footer";
 import { GameConfig, Gift, GameDifficulty, QuizData } from "@/types/game";
 import {
   encodeGameConfig,
@@ -953,6 +955,32 @@ export const GameCreator: React.FC = () => {
               <Play className="size-4 fill-current" />
               <span>Chơi thử</span>
             </a>
+          </div>
+
+          <div className="mt-4 flex flex-col items-center justify-between gap-2.5 border-t border-success-600/20 pt-3.5 sm:flex-row">
+            <span className="text-xs text-ink-700">
+              Tham gia cộng đồng <strong className="font-bold text-ink-900">Bộ Tộc IT</strong>:
+            </span>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <a
+                href={COMMUNITY_LINKS.zalo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-ink-900/10 bg-white/90 px-2.5 py-1 text-xs font-medium text-ink-900 shadow-xs transition hover:border-gold-500/50 hover:bg-white"
+              >
+                <Image src="/zalo.svg" alt="Zalo" width={16} height={16} className="size-3.5 rounded" />
+                <span>Nhóm Zalo</span>
+              </a>
+              <a
+                href={COMMUNITY_LINKS.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border border-ink-900/10 bg-white/90 px-2.5 py-1 text-xs font-medium text-ink-900 shadow-xs transition hover:border-gold-500/50 hover:bg-white"
+              >
+                <Image src="/facebook.svg" alt="Facebook" width={16} height={16} className="size-3.5 rounded" />
+                <span>Nhóm Facebook</span>
+              </a>
+            </div>
           </div>
         </Panel>
       )}
