@@ -30,6 +30,8 @@ export class GameScene extends Phaser.Scene {
   private kamaDrainRate: number = GAME_CONSTANTS.KAMA_DRAIN_PER_SEC;
   private kamaPerTap: number = GAME_CONSTANTS.KAMA_PER_TAP;
   private slideStepPenalty: number = 3.5;
+  private idleSlideSpeed: number = 0.9; // Bậc trượt xuống mỗi giây khi đứng yên
+  private timeSinceLastTap: number = 0;
 
   constructor() {
     super({ key: "GameScene" });
@@ -44,14 +46,17 @@ export class GameScene extends Phaser.Scene {
       this.kamaDrainRate = 11;
       this.kamaPerTap = 10;
       this.slideStepPenalty = 2;
+      this.idleSlideSpeed = 0.6;
     } else if (diff === "hard") {
       this.kamaDrainRate = 23;
       this.kamaPerTap = 6.5;
       this.slideStepPenalty = 5;
+      this.idleSlideSpeed = 1.35;
     } else {
       this.kamaDrainRate = 16;
       this.kamaPerTap = 8;
       this.slideStepPenalty = 3.5;
+      this.idleSlideSpeed = 0.9;
     }
 
     this.unopenedGifts.clear();
@@ -65,6 +70,7 @@ export class GameScene extends Phaser.Scene {
     this.currentStep = 0;
     this.currentStepFloat = 0;
     this.targetStepFloat = 0;
+    this.timeSinceLastTap = 0;
     this.kama = GAME_CONSTANTS.KAMA_INITIAL;
     this.isSliding = false;
     this.isPausedForGift = false;
@@ -75,9 +81,10 @@ export class GameScene extends Phaser.Scene {
     const { width, height } = this.scale;
     const totalSteps = this.configData.steps;
     const stepHeight = GAME_CONSTANTS.STEP_HEIGHT;
-    const worldHeight = totalSteps * stepHeight + height;
+    const extraTopHeadroom = 450; // Cho phép camera cuộn hẳn lên trên Cung Trăng
+    const worldHeight = totalSteps * stepHeight + height + extraTopHeadroom;
 
-    this.cameras.main.setBounds(0, -worldHeight + height, width, worldHeight);
+    this.cameras.main.setBounds(0, -totalSteps * stepHeight - extraTopHeadroom, width, worldHeight);
     this.cameras.main.setBackgroundColor(0x0a071b);
 
     // 1. Vẽ bầu trời Parallax
@@ -300,36 +307,67 @@ export class GameScene extends Phaser.Scene {
    * TẦNG 5: Cung Trăng Nguy Nga, Cây Đa Cổ Thụ & Thỏ Ngọc (85% -> 100%)
    */
   private buildStage5MoonKingdom(width: number, totalSteps: number, stepHeight: number) {
-    const moonY = -totalSteps * stepHeight - 65;
+    const topLadderY = -totalSteps * stepHeight;
+    const moonY = topLadderY - 150;
     const centerX = width / 2;
 
     const container = this.add.container(centerX, moonY);
 
-    // 1. Quầng hào quang vàng rực
-    const auraOuter = this.add.circle(0, 0, 115, 0xfde047, 0.12);
-    const auraMid = this.add.circle(0, 0, 88, 0xfef08a, 0.22);
+    // 1. Quầng hào quang vàng rực to lớn
+    const auraOuter = this.add.circle(0, 0, 160, 0xfde047, 0.15);
+    const auraMid = this.add.circle(0, 0, 120, 0xfef08a, 0.25);
 
-    // 2. Thân Mặt Trăng tròn vàng ấm
-    const moonBody = this.add.circle(0, 0, 68, 0xfffbeb);
-    moonBody.setStrokeStyle(3.5, 0xfef08a);
+    // 2. Thân Mặt Trăng tròn vàng ấm rực rỡ
+    const moonBody = this.add.circle(0, 0, 90, 0xfffbeb);
+    moonBody.setStrokeStyle(4, 0xfef08a);
 
     // 3. Vết tích trăng mờ
-    const crater1 = this.add.circle(-22, -16, 12, 0xfde68a, 0.55);
-    const crater2 = this.add.circle(20, 22, 16, 0xfde68a, 0.45);
+    const crater1 = this.add.circle(-30, -22, 16, 0xfde68a, 0.55);
+    const crater2 = this.add.circle(28, 28, 20, 0xfde68a, 0.45);
+    const crater3 = this.add.circle(22, -36, 12, 0xfde68a, 0.45);
 
-    // 4. Cây Đa sum suê cổ kính (Gốc cây đa Chú Cuội)
-    const banyan = this.createBanyanTree(-28, 5);
+    // 4. Cây Đa sum suê cổ kính bên Cung Trăng (Gốc cây đa Chú Cuội)
+    const banyan = this.createBanyanTree(-36, 6);
 
     // 5. Cung điện Quảng Hàn Cung
-    const palace = this.createMoonPalace(18, -12);
+    const palace = this.createMoonPalace(26, -20);
 
     // 6. Thỏ Ngọc (Moon Rabbit) trắng muốt giã ngọc bên cạnh
-    const rabbit = this.createMoonRabbit(15, 28);
+    const rabbit = this.createMoonRabbit(22, 38);
 
-    // 7. Dải mây lụa vắt ngang đáy trăng
-    const silkCloud = this.add.rectangle(0, 48, 145, 14, 0xffffff, 0.5);
+    // 7. Biển mây bồng bềnh làm bệ đỡ ngay đỉnh thang để Cuội bước lên
+    const cloud1 = this.add.circle(-45, 80, 40, 0xffffff, 0.6);
+    const cloud2 = this.add.circle(45, 80, 40, 0xffffff, 0.6);
+    const cloudCenter = this.add.ellipse(0, 88, 170, 36, 0xffffff, 0.8);
 
-    container.add([auraOuter, auraMid, moonBody, crater1, crater2, banyan, palace, rabbit, silkCloud]);
+    // Bảng chào mừng Cung Trăng
+    const banner = this.add.container(0, -102);
+    const bannerBg = this.add.rectangle(0, 0, 130, 26, 0xef4444, 0.95);
+    bannerBg.setStrokeStyle(2, 0xfde047);
+    const bannerText = this.add.text(0, 0, "CUNG TRĂNG 🌕", {
+      fontSize: "12px",
+      fontStyle: "bold",
+      color: "#ffffff",
+      fontFamily: "sans-serif",
+    });
+    bannerText.setOrigin(0.5);
+    banner.add([bannerBg, bannerText]);
+
+    container.add([
+      auraOuter,
+      auraMid,
+      moonBody,
+      crater1,
+      crater2,
+      crater3,
+      banyan,
+      palace,
+      rabbit,
+      cloud1,
+      cloud2,
+      cloudCenter,
+      banner,
+    ]);
 
     // Hiệu ứng thở hào quang
     this.tweens.add({
@@ -494,12 +532,17 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
+    this.timeSinceLastTap = 0;
     this.targetStepFloat = Math.min(this.configData.steps, this.targetStepFloat + 1);
     this.kama = Math.min(GAME_CONSTANTS.KAMA_MAX, this.kama + this.kamaPerTap);
     this.callbacks.onKamaChange?.(this.kama);
 
     this.cuoi.playClimbEffect();
     this.spawnClimbSparkles(this.cuoi.x, this.cuoi.y + 20);
+    if (this.targetStepFloat >= this.configData.steps && !this.isVictory) {
+      this.currentStepFloat = this.configData.steps;
+      this.triggerVictory();
+    }
   }
 
   private spawnClimbSparkles(x: number, y: number) {
@@ -542,6 +585,7 @@ export class GameScene extends Phaser.Scene {
 
   public resumeAfterGift() {
     this.isPausedForGift = false;
+    this.timeSinceLastTap = 0;
     this.kama = Math.min(GAME_CONSTANTS.KAMA_MAX, this.kama + GAME_CONSTANTS.GIFT_KAMA_BONUS);
     this.callbacks.onKamaChange?.(this.kama);
     this.callbacks.onStateChange?.("playing");
@@ -554,6 +598,7 @@ export class GameScene extends Phaser.Scene {
     this.currentStep = 0;
     this.currentStepFloat = 0;
     this.targetStepFloat = 0;
+    this.timeSinceLastTap = 0;
     this.kama = GAME_CONSTANTS.KAMA_INITIAL;
 
     this.unopenedGifts.clear();
@@ -618,23 +663,46 @@ export class GameScene extends Phaser.Scene {
         this.callbacks.onStateChange?.("sliding");
       }
 
-      this.currentStepFloat = Phaser.Math.Linear(
-        this.currentStepFloat,
-        this.targetStepFloat,
-        0.18
-      );
+      // Đứng yên không tap (quá 0.35s): Cuội tự động trượt xuống từ từ
+      this.timeSinceLastTap += dtSeconds;
+      if (this.timeSinceLastTap > 0.35 && this.targetStepFloat > 0 && !this.isSliding) {
+        // Tốc độ trượt tăng nhẹ nếu KAMA thấp (Cuội mệt mỏi)
+        const tiredMultiplier = this.kama < 25 ? 1.4 : this.kama < 50 ? 1.2 : 1.0;
+        const drift = this.idleSlideSpeed * tiredMultiplier * dtSeconds;
+        this.targetStepFloat = Math.max(0, this.targetStepFloat - drift);
+      }
+
+      // Nội suy mượt mà nhưng snap khi khoảng cách rất nhỏ (tránh tiệm cận số thực kẹt ở 79.999...)
+      if (Math.abs(this.targetStepFloat - this.currentStepFloat) < 0.04) {
+        this.currentStepFloat = this.targetStepFloat;
+      } else {
+        this.currentStepFloat = Phaser.Math.Linear(
+          this.currentStepFloat,
+          this.targetStepFloat,
+          0.22
+        );
+      }
+    }
+
+    // Nếu gần chạm đỉnh Cung Trăng thì snap lên đúng bậc cuối
+    if (this.currentStepFloat >= this.configData.steps - 0.05) {
+      this.currentStepFloat = this.configData.steps;
     }
 
     const cuoiY = -this.currentStepFloat * GAME_CONSTANTS.STEP_HEIGHT;
     this.cuoi.y = cuoiY;
 
-    const newStepInt = Math.floor(this.currentStepFloat);
+    // Cập nhật bậc nguyên hiện tại (dùng Math.round để hiển thị chính xác bậc)
+    const newStepInt = Math.min(this.configData.steps, Math.round(this.currentStepFloat));
     if (newStepInt !== this.currentStep) {
       this.currentStep = newStepInt;
       this.callbacks.onStepChange?.(this.currentStep, this.configData.steps);
     }
 
-    this.cameras.main.scrollY = cuoiY - this.scale.height * 0.65;
+    // Khi gần lên tới đỉnh thang, camera nâng tầm nhìn lên để Cung Trăng hiển thị trọn vẹn ở nửa trên
+    const summitRatio = Math.max(0, Math.min(1, (this.currentStepFloat - (this.configData.steps - 6)) / 6));
+    const cameraOffsetY = Phaser.Math.Linear(this.scale.height * 0.62, this.scale.height * 0.72, summitRatio);
+    this.cameras.main.scrollY = cuoiY - cameraOffsetY;
 
     const progressPercent = Math.min(1, this.currentStepFloat / this.configData.steps);
     this.updateSkyColor(progressPercent);
@@ -674,9 +742,49 @@ export class GameScene extends Phaser.Scene {
 
   private triggerVictory() {
     this.isVictory = true;
+    this.currentStep = this.configData.steps;
+    this.currentStepFloat = this.configData.steps;
+    this.callbacks.onStepChange?.(this.configData.steps, this.configData.steps);
     this.cuoi.playVictoryAnimation();
     this.callbacks.onStateChange?.("victory");
-    this.callbacks.onVictory?.(this.configData.finalMessage);
+
+    // Bắn chùm pháo hoa rực rỡ quanh Cung Trăng trong game
+    this.spawnVictoryFireworks();
+
+    // Chờ 2.2 giây để người chơi nhìn thấy trọn vẹn Cung Trăng và Cuội nhảy múa trước khi mở popup chúc mừng
+    this.time.delayedCall(2200, () => {
+      this.callbacks.onVictory?.(this.configData.finalMessage);
+    });
+  }
+
+  private spawnVictoryFireworks() {
+    const { width } = this.scale;
+    const topLadderY = -this.configData.steps * GAME_CONSTANTS.STEP_HEIGHT;
+    const colors = [0xfacc15, 0xf87171, 0x4ade80, 0x60a5fa, 0xffffff];
+
+    for (let f = 0; f < 5; f++) {
+      this.time.delayedCall(f * 350, () => {
+        const fireworkX = width / 2 + Phaser.Math.Between(-110, 110);
+        const fireworkY = topLadderY - 140 + Phaser.Math.Between(-90, 30);
+        for (let i = 0; i < 20; i++) {
+          const angle = (i / 20) * Math.PI * 2;
+          const speed = Phaser.Math.Between(45, 100);
+          const color = Phaser.Utils.Array.GetRandom(colors);
+          const spark = this.add.circle(fireworkX, fireworkY, 3.5, color);
+
+          this.tweens.add({
+            targets: spark,
+            x: fireworkX + Math.cos(angle) * speed,
+            y: fireworkY + Math.sin(angle) * speed,
+            alpha: 0,
+            scale: 0.1,
+            duration: 850,
+            ease: "Quad.easeOut",
+            onComplete: () => spark.destroy(),
+          });
+        }
+      });
+    }
   }
 
   private updateSkyColor(progress: number) {

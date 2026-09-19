@@ -263,7 +263,7 @@ export const GameCreator: React.FC = () => {
               value={receiverName}
               onChange={(e) => setReceiverName(e.target.value)}
               placeholder="VD: Bé An, Bạn Thảo..."
-              className="w-full px-3.5 py-2 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm bg-white"
+              className="w-full px-3.5 py-2 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm bg-white text-slate-900 font-semibold placeholder:text-slate-400"
             />
           </div>
           <div>
@@ -276,7 +276,7 @@ export const GameCreator: React.FC = () => {
               value={creatorName}
               onChange={(e) => setCreatorName(e.target.value)}
               placeholder="VD: Chú Cuội, Anh Toàn..."
-              className="w-full px-3.5 py-2 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm bg-white"
+              className="w-full px-3.5 py-2 rounded-xl border border-amber-200 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm bg-white text-slate-900 font-semibold placeholder:text-slate-400"
             />
           </div>
         </div>
@@ -423,7 +423,7 @@ export const GameCreator: React.FC = () => {
                       max={steps - 1}
                       value={gift.step}
                       onChange={(e) => handleUpdateGift(idx, "step", e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg border border-amber-300 font-bold text-sm bg-white focus:ring-1 focus:ring-amber-500"
+                      className="w-full px-3 py-1.5 rounded-lg border border-amber-300 font-bold text-sm bg-white text-slate-900 focus:ring-1 focus:ring-amber-500"
                       required
                     />
                   </div>
@@ -443,7 +443,7 @@ export const GameCreator: React.FC = () => {
                       value={gift.message}
                       onChange={(e) => handleUpdateGift(idx, "message", e.target.value)}
                       placeholder="Lời nhắn động viên, bánh kẹo, trà..."
-                      className="w-full px-3 py-1.5 rounded-lg border border-amber-300 text-xs sm:text-sm bg-white focus:ring-1 focus:ring-amber-500"
+                      className="w-full px-3 py-1.5 rounded-lg border border-amber-300 text-xs sm:text-sm bg-white text-slate-900 font-semibold placeholder:text-slate-400 focus:ring-1 focus:ring-amber-500"
                       required
                     />
                   </div>
@@ -478,7 +478,7 @@ export const GameCreator: React.FC = () => {
             value={finalMessage}
             onChange={(e) => setFinalMessage(e.target.value)}
             placeholder="Viết lời chúc ý nghĩa nhất gửi đến người nhận khi họ chinh phục đỉnh Cung Trăng..."
-            className="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs sm:text-sm bg-white text-slate-800 leading-relaxed"
+            className="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs sm:text-sm bg-white text-slate-900 font-semibold placeholder:text-slate-400 leading-relaxed"
             required
           />
         </div>
