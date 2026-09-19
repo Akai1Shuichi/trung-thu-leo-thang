@@ -55,22 +55,22 @@ Mục tiêu: Web mini-game Trung Thu không backend, chia sẻ toàn bộ cấu 
 ---
 
 ### Giai đoạn 4: Lõi Gameplay cơ bản (Core Gameplay Mechanics)
-- [ ] Tích hợp Phaser 3 vào React component (`/play`):
+- [x] Tích hợp Phaser 3 vào React component (`/play`):
   - Khởi tạo Canvas tương thích màn hình dọc mobile và desktop
   - Xử lý cleanup vòng đời game khi unmount
-- [ ] Xây dựng nhân vật Chú Cuội (`src/game/Cuoi.ts`):
+- [x] Xây dựng nhân vật Chú Cuội (`src/game/Cuoi.ts`):
   - Tạo hình Chú Cuội tròn mềm, dễ thương (dạng kẹo bông gòn)
   - Animation trạng thái: leo, nghỉ/lơ lửng, tụt dốc, ăn mừng
-- [ ] Cơ chế vật lý & Năng lượng KAMA:
+- [x] Cơ chế vật lý & Năng lượng KAMA:
   - Chỉ số KAMA (0 - 100%): liên tục giảm theo thời gian (`kamaDrain`)
   - Thao tác Tap/Click: tăng vận tốc leo (`velocity += tapPower`) và hồi phục KAMA
   - Khi ngừng tap: trọng lực kéo xuống, giảm tốc độ
   - Khi KAMA = 0: Chú Cuội trượt xuống bậc thang; sau khi trượt một khoảng cách, tự hồi 30% KAMA để tiếp tục
-- [ ] Bậc thang & Điểm mốc Quà (Gift Checkpoints):
+- [x] Bậc thang & Điểm mốc Quà (Gift Checkpoints):
   - Render bậc thang dựa trên `config.steps`
   - Đặt các hộp quà tại các bậc tương ứng
   - Khi chạm quà: tạm dừng game (`pause`), kích hoạt sự kiện mở quà
-- [ ] Checkpoint Cung Trăng (Victory):
+- [x] Checkpoint Cung Trăng (Victory):
   - Khi chạm bậc cuối cùng: kích hoạt chiến thắng, dừng rơi, kích hoạt sự kiện kết thúc
 
 ---
