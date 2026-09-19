@@ -1,61 +1,170 @@
 @import "tailwindcss";
 
 :root {
-  --background: #090518;
-  --foreground: #ffffff;
+  --background: #080615;
+  --foreground: #fff8e7;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --shadow-control: 0 8px 20px rgb(8 6 21 / 0.18);
+  --shadow-elevated: 0 22px 60px rgb(8 6 21 / 0.32);
+  --shadow-modal: 0 30px 90px rgb(8 6 21 / 0.46);
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 600ms;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-night-950: #080615;
+  --color-night-900: #13102b;
+  --color-night-800: #211a40;
+  --color-night-700: #312653;
+  --color-moon-50: #fff9ea;
+  --color-moon-100: #f8edcf;
+  --color-moon-200: #ead9ad;
+  --color-gold-300: #f5d78a;
+  --color-gold-400: #f1bd54;
+  --color-gold-500: #e9a62f;
+  --color-gold-600: #cc8420;
+  --color-gold-700: #995b18;
+  --color-ink-900: #2d1d12;
+  --color-ink-700: #58402f;
+  --color-ink-600: #755c48;
+  --color-ink-inverse: #fff8e7;
+  --color-success-50: #eaf8f3;
+  --color-success-600: #16836f;
+  --color-success-700: #0e6657;
+  --color-danger-50: #fff0ef;
+  --color-danger-600: #c94750;
+  --color-danger-700: #9e3039;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  scroll-behavior: smooth;
+}
+
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
 }
 
-/* Đảm bảo toàn bộ input và textarea luôn có màu chữ đen/slate đậm rõ ràng, không bị kế thừa màu trắng từ body */
-input, textarea, select {
-  color: #0f172a !important;
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
-input::placeholder, textarea::placeholder {
-  color: #94a3b8 !important;
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
 }
 
-@keyframes lanternSwing {
-  0%, 100% {
-    transform: rotate(-4deg);
-    transform-origin: top center;
-  }
-  50% {
-    transform: rotate(4deg);
-    transform-origin: top center;
-  }
+::selection {
+  background: rgb(233 166 47 / 0.35);
+  color: var(--foreground);
 }
 
-@keyframes fadeIn {
+.app-shell {
+  min-height: 100svh;
+  background:
+    radial-gradient(circle at 78% 10%, rgb(233 166 47 / 0.12), transparent 24rem),
+    linear-gradient(155deg, var(--color-night-900), var(--color-night-950) 58%);
+  color: var(--color-ink-inverse);
+}
+
+.moon-surface {
+  background: var(--color-moon-50);
+  color: var(--color-ink-900);
+  border: 1px solid rgb(234 217 173 / 0.9);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
+}
+
+.night-surface {
+  background: rgb(33 26 64 / 0.76);
+  color: var(--color-ink-inverse);
+  border: 1px solid rgb(255 248 231 / 0.12);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-control);
+  backdrop-filter: blur(16px);
+}
+
+.focus-ring:focus-visible {
+  outline: 3px solid rgb(241 189 84 / 0.52);
+  outline-offset: 3px;
+}
+
+@keyframes uiEnter {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
 
-.animate-lanternSwing {
-  animation: lanternSwing 3s ease-in-out infinite;
+@keyframes lanternSwing {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
 }
 
+@keyframes moonFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.ui-enter,
 .animate-fadeIn {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: uiEnter var(--duration-slow) cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.lantern-swing,
+.animate-lanternSwing {
+  transform-origin: top center;
+  animation: lanternSwing 4.8s ease-in-out infinite;
+}
+
+.moon-float {
+  animation: moonFloat 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
