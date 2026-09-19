@@ -3,6 +3,9 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const css = readFileSync(new URL("../src/app/globals.css", import.meta.url), "utf8");
+const uiIndex = readFileSync(new URL("../src/components/ui/index.ts", import.meta.url), "utf8");
+const iconButton = readFileSync(new URL("../src/components/ui/IconButton.tsx", import.meta.url), "utf8");
+const modalShell = readFileSync(new URL("../src/components/ui/ModalShell.tsx", import.meta.url), "utf8");
 
 test("defines the shared semantic design tokens", () => {
   for (const token of [
@@ -28,4 +31,17 @@ test("provides a reduced-motion escape hatch", () => {
 test("does not globally force form colors or disable selection", () => {
   assert.doesNotMatch(css, /input,\s*textarea,\s*select\s*\{[^}]*!important/);
   assert.doesNotMatch(css, /body[\s\S]{0,240}user-select:\s*none/);
+});
+
+test("exports the complete primitive surface", () => {
+  for (const name of ["Button", "buttonClassName", "IconButton", "Field", "Panel", "Badge", "SectionHeader", "ModalShell"]) {
+    assert.match(uiIndex, new RegExp(`\\b${name}\\b`));
+  }
+});
+
+test("requires accessible labels for icon buttons and dialogs", () => {
+  assert.match(iconButton, /"aria-label":\s*string/);
+  assert.match(modalShell, /role="dialog"/);
+  assert.match(modalShell, /aria-modal="true"/);
+  assert.match(modalShell, /aria-labelledby=\{labelledBy\}/);
 });
