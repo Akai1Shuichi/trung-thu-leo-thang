@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { GameConfig, Gift, GameDifficulty, QuizData } from "@/types/game";
 import {
   encodeGameConfig,
@@ -172,10 +172,12 @@ export const GameCreator: React.FC = () => {
   // Số cơ hội vượt qua nếu không trả lời được (mặc định là 1)
   const [quizPassChances, setQuizPassChances] = useState<number>(1);
 
+  const nextIdRef = useRef<number>((DEFAULT_GAME_CONFIG.gifts?.length || 0) + 1);
+
   // Danh sách mốc nấc thang
   const [checkpoints, setCheckpoints] = useState<CheckpointFormItem[]>(() => {
     return (DEFAULT_GAME_CONFIG.gifts || []).map((g, idx) => ({
-      id: `cp-${Date.now()}-${idx}`,
+      id: `cp-${idx + 1}`,
       step: g.step,
       type: g.quiz ? "quiz" : "message",
       message: g.message || "Một món quà Trung Thu bất ngờ dành cho bạn! 🥮",
@@ -200,8 +202,8 @@ export const GameCreator: React.FC = () => {
     setFinalMessage(preset.config.finalMessage);
     setQuizPassChances(preset.config.quizPassChances ?? 1);
 
-    const mapped: CheckpointFormItem[] = (preset.config.gifts || []).map((g, idx) => ({
-      id: `cp-${Date.now()}-${idx}`,
+    const mapped: CheckpointFormItem[] = (preset.config.gifts || []).map((g) => ({
+      id: `cp-${nextIdRef.current++}`,
       step: g.step,
       type: g.quiz ? "quiz" : "message",
       message: g.message || "Một món quà Trung Thu bất ngờ dành cho bạn! 🥮",
@@ -235,7 +237,7 @@ export const GameCreator: React.FC = () => {
     const defaultType: CheckpointType = "message";
 
     const newItem: CheckpointFormItem = {
-      id: `cp-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      id: `cp-${nextIdRef.current++}`,
       step: targetStep,
       type: defaultType,
       message: sampleRiddle.message,
