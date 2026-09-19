@@ -313,122 +313,116 @@ export class GameScene extends Phaser.Scene {
 
     const container = this.add.container(centerX, moonY);
 
-    // 1. Quầng hào quang vàng rực to lớn
-    const auraOuter = this.add.circle(0, 0, 160, 0xfde047, 0.15);
-    const auraMid = this.add.circle(0, 0, 120, 0xfef08a, 0.25);
+    // === God Rays (vẽ trước, nằm dưới cùng) ===
+    const raysGfx = this.add.graphics();
+    for (let i = 0; i < 6; i++) {
+      const a = (i / 6) * Math.PI * 2;
+      raysGfx.fillStyle(0xfffbeb, 0.04);
+      raysGfx.beginPath();
+      raysGfx.moveTo(Math.cos(a - 0.06) * 70, Math.sin(a - 0.06) * 70);
+      raysGfx.lineTo(Math.cos(a - 0.03) * 300, Math.sin(a - 0.03) * 300);
+      raysGfx.lineTo(Math.cos(a + 0.03) * 300, Math.sin(a + 0.03) * 300);
+      raysGfx.lineTo(Math.cos(a + 0.06) * 70, Math.sin(a + 0.06) * 70);
+      raysGfx.closePath();
+      raysGfx.fillPath();
+    }
+    this.tweens.add({ targets: raysGfx, angle: 360, duration: 60000, repeat: -1 });
 
-    // 2. Thân Mặt Trăng tròn vàng ấm rực rỡ
-    const moonBody = this.add.circle(0, 0, 90, 0xfffbeb);
-    moonBody.setStrokeStyle(4, 0xfef08a);
+    // === 1. Hào quang 4 lớp ===
+    const aura1 = this.add.circle(0, 0, 190, 0xfde047, 0.07);
+    const aura2 = this.add.circle(0, 0, 155, 0xfef08a, 0.11);
+    const aura3 = this.add.circle(0, 0, 130, 0xfff7cc, 0.16);
+    const aura4 = this.add.circle(0, 0, 112, 0xfffbeb, 0.22);
 
-    // 3. Vết tích trăng mờ
-    const crater1 = this.add.circle(-30, -22, 16, 0xfde68a, 0.55);
-    const crater2 = this.add.circle(28, 28, 20, 0xfde68a, 0.45);
-    const crater3 = this.add.circle(22, -36, 12, 0xfde68a, 0.45);
+    // === 2. Mặt Trăng gradient ===
+    const moonGlow = this.add.circle(0, 0, 102, 0xfff7cc, 0.3);
+    const moonBody = this.add.circle(0, 0, 98, 0xfffdf5);
+    moonBody.setStrokeStyle(3, 0xfde68a);
+    const moonWarmth = this.add.circle(0, 0, 78, 0xfff8e1, 0.25);
 
-    // 4. Cây Đa sum suê cổ kính bên Cung Trăng (Gốc cây đa Chú Cuội)
-    const banyan = this.createBanyanTree(-36, 6);
+    // Vết trăng
+    const c1 = this.add.ellipse(-30, -20, 20, 15, 0xfde68a, 0.5);
+    c1.setAngle(15);
+    const c2 = this.add.circle(30, 25, 18, 0xfde68a, 0.4);
+    const c3 = this.add.ellipse(20, -35, 12, 16, 0xfde68a, 0.4);
+    c3.setAngle(-20);
+    const c4 = this.add.circle(-35, 25, 10, 0xfde68a, 0.45);
+    const c5 = this.add.ellipse(0, 40, 15, 10, 0xfde68a, 0.35);
 
-    // 5. Cung điện Quảng Hàn Cung
-    const palace = this.createMoonPalace(26, -20);
+    // Texture bề mặt
+    const t1 = this.add.circle(-8, -8, 3, 0xfde68a, 0.12);
+    const t2 = this.add.circle(12, 10, 4, 0xfde68a, 0.12);
+    const t3 = this.add.circle(-18, 12, 2.5, 0xfde68a, 0.12);
 
-    // 6. Thỏ Ngọc (Moon Rabbit) trắng muốt giã ngọc bên cạnh
-    const rabbit = this.createMoonRabbit(22, 38);
+    // === 3. Biển mây bồng bềnh bệ đỡ đỉnh thang ===
+    const clouds = this.add.container(0, 0);
+    const cb1 = this.add.circle(-50, 78, 38, 0xffffff, 0.35);
+    const cb2 = this.add.circle(50, 78, 38, 0xffffff, 0.35);
+    const cb3 = this.add.circle(0, 68, 42, 0xffffff, 0.35);
+    const cf1 = this.add.circle(-35, 85, 35, 0xffffff, 0.75);
+    const cf2 = this.add.circle(35, 85, 35, 0xffffff, 0.75);
+    const cfC = this.add.ellipse(0, 92, 170, 36, 0xffffff, 0.85);
+    const cw1 = this.add.ellipse(-85, 92, 50, 12, 0xffffff, 0.18);
+    const cw2 = this.add.ellipse(85, 92, 50, 12, 0xffffff, 0.18);
+    clouds.add([cb1, cb2, cb3, cf1, cf2, cfC, cw1, cw2]);
+    this.tweens.add({ targets: clouds, x: { from: -4, to: 4 }, duration: 3500, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
 
-    // 7. Biển mây bồng bềnh làm bệ đỡ ngay đỉnh thang để Cuội bước lên
-    const cloud1 = this.add.circle(-45, 80, 40, 0xffffff, 0.6);
-    const cloud2 = this.add.circle(45, 80, 40, 0xffffff, 0.6);
-    const cloudCenter = this.add.ellipse(0, 88, 170, 36, 0xffffff, 0.8);
-
-    // Bảng chào mừng Cung Trăng
-    const banner = this.add.container(0, -102);
-    const bannerBg = this.add.rectangle(0, 0, 130, 26, 0xef4444, 0.95);
-    bannerBg.setStrokeStyle(2, 0xfde047);
-    const bannerText = this.add.text(0, 0, "CUNG TRĂNG 🌕", {
-      fontSize: "12px",
-      fontStyle: "bold",
-      color: "#ffffff",
-      fontFamily: "sans-serif",
-    });
+    // === 4. Banner Cung Trăng ===
+    const banner = this.add.container(0, -118);
+    const bannerGfx = this.add.graphics();
+    bannerGfx.fillStyle(0xef4444, 0.95);
+    bannerGfx.fillRoundedRect(-72, -14, 144, 28, 8);
+    bannerGfx.lineStyle(2, 0xfde047, 1);
+    bannerGfx.strokeRoundedRect(-72, -14, 144, 28, 8);
+    const bannerText = this.add.text(0, 0, "CUNG TRĂNG 🌕", { fontSize: "13px", fontStyle: "bold", color: "#ffffff", fontFamily: "sans-serif" });
     bannerText.setOrigin(0.5);
-    banner.add([bannerBg, bannerText]);
+    const bDot1 = this.add.circle(-62, -6, 2, 0xfde047);
+    const bDot2 = this.add.circle(62, -6, 2, 0xfde047);
+    const bDot3 = this.add.circle(-62, 6, 2, 0xfde047);
+    const bDot4 = this.add.circle(62, 6, 2, 0xfde047);
+    banner.add([bannerGfx, bannerText, bDot1, bDot2, bDot3, bDot4]);
 
+    // === 5. Sparkle particles quanh trăng ===
+    const sparkles: Phaser.GameObjects.Arc[] = [];
+    for (let i = 0; i < 12; i++) {
+      const sa = Phaser.Math.FloatBetween(0, Math.PI * 2);
+      const sd = Phaser.Math.Between(108, 170);
+      const sp = this.add.circle(Math.cos(sa) * sd, Math.sin(sa) * sd, Phaser.Math.FloatBetween(1.2, 2.2), 0xffffff, 0.7);
+      this.tweens.add({ targets: sp, alpha: 0.1, scale: 0.4, duration: Phaser.Math.Between(600, 1400), yoyo: true, repeat: -1, delay: Phaser.Math.Between(0, 1000) });
+      sparkles.push(sp);
+    }
+
+    // Add all vào container (chỉ giữ lại Mặt Trăng tỏa sáng, mây và banner)
     container.add([
-      auraOuter,
-      auraMid,
-      moonBody,
-      crater1,
-      crater2,
-      crater3,
-      banyan,
-      palace,
-      rabbit,
-      cloud1,
-      cloud2,
-      cloudCenter,
-      banner,
+      raysGfx,
+      aura1, aura2, aura3, aura4,
+      moonGlow, moonBody, moonWarmth,
+      c1, c2, c3, c4, c5, t1, t2, t3,
+      clouds, banner,
+      ...sparkles,
     ]);
 
-    // Hiệu ứng thở hào quang
-    this.tweens.add({
-      targets: [auraOuter, auraMid],
-      scale: 1.08,
-      duration: 2000,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
+    // Aura pulse lệch pha
+    this.tweens.add({ targets: aura1, scale: 1.05, duration: 2500, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+    this.tweens.add({ targets: aura2, scale: 1.06, duration: 2200, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: 300 });
+    this.tweens.add({ targets: aura3, scale: 1.07, duration: 1900, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: 600 });
+    this.tweens.add({ targets: aura4, scale: 1.04, duration: 1700, yoyo: true, repeat: -1, ease: "Sine.easeInOut", delay: 900 });
+
+    // Fireflies
+    this.spawnFireflies(centerX, moonY);
   }
 
-  private createBanyanTree(x: number, y: number): Phaser.GameObjects.Container {
-    const c = this.add.container(x, y);
-    // Gốc cây nâu
-    const trunk = this.add.rectangle(0, 16, 12, 36, 0x78350f);
-    trunk.setStrokeStyle(1.5, 0x451a03);
-
-    // Tán lá tròn sum suê màu vàng cam ánh trăng
-    const f1 = this.add.circle(0, -6, 22, 0xd97706, 0.85);
-    const f2 = this.add.circle(-14, -2, 16, 0xf59e0b, 0.85);
-    const f3 = this.add.circle(14, -4, 16, 0xb45309, 0.85);
-    const fTop = this.add.circle(0, -18, 14, 0xfbbf24, 0.9);
-
-    c.add([trunk, f1, f2, f3, fTop]);
-    return c;
-  }
-
-  private createMoonPalace(x: number, y: number): Phaser.GameObjects.Container {
-    const c = this.add.container(x, y);
-    const roof1 = this.add.triangle(0, 0, -18, 0, 18, 0, 0, -14, 0xe11d48);
-    const base = this.add.rectangle(0, 8, 24, 16, 0xfef08a);
-    base.setStrokeStyle(1.5, 0xd97706);
-    const roof2 = this.add.triangle(0, -12, -14, 0, 14, 0, 0, -10, 0xb91c1c);
-
-    c.add([base, roof1, roof2]);
-    return c;
-  }
-
-  private createMoonRabbit(x: number, y: number): Phaser.GameObjects.Container {
-    const c = this.add.container(x, y);
-    const body = this.add.circle(0, 0, 8, 0xffffff);
-    body.setStrokeStyle(1, 0xf3f4f6);
-    const head = this.add.circle(-5, -6, 5, 0xffffff);
-    const earL = this.add.ellipse(-7, -14, 3, 9, 0xffffff);
-    const earR = this.add.ellipse(-4, -14, 3, 9, 0xffe4e6);
-    const eye = this.add.circle(-6, -7, 1.2, 0xf43f5e);
-
-    c.add([body, head, earL, earR, eye]);
-
-    // Thỏ Ngọc nhấp nhô vui vẻ
-    this.tweens.add({
-      targets: c,
-      y: y - 4,
-      yoyo: true,
-      duration: 600,
-      repeat: -1,
-      ease: "Sine.easeInOut",
-    });
-
-    return c;
+  private spawnFireflies(centerX: number, moonY: number) {
+    for (let i = 0; i < 16; i++) {
+      const color = Math.random() > 0.5 ? 0xfde047 : 0xbef264;
+      const a = Phaser.Math.FloatBetween(0, Math.PI * 2);
+      const d = Phaser.Math.FloatBetween(50, 170);
+      const px = centerX + Math.cos(a) * d;
+      const py = moonY + Math.sin(a) * d;
+      const ff = this.add.circle(px, py, Phaser.Math.FloatBetween(1.2, 2.2), color);
+      this.tweens.add({ targets: ff, alpha: { from: 0.2, to: 0.8 }, duration: Phaser.Math.Between(800, 1500), yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+      this.tweens.add({ targets: ff, x: px + Phaser.Math.Between(-12, 12), y: py + Phaser.Math.Between(-12, 12), duration: Phaser.Math.Between(3000, 5000), yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+    }
   }
 
   private createLantern(x: number, y: number): Phaser.GameObjects.Container {
