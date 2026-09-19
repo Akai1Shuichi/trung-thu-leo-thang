@@ -1,11 +1,12 @@
 import * as Phaser from "phaser";
 import { GameConfig, GameEventPayloads, Gift } from "@/types/game";
+import { DEFAULT_GAME_CONFIG } from "@/lib/gameUrl";
 import { Cuoi } from "./Cuoi";
 import { GAME_CONSTANTS } from "./config";
 
 export class GameScene extends Phaser.Scene {
-  private configData!: GameConfig;
-  private callbacks!: GameEventPayloads;
+  private configData: GameConfig = DEFAULT_GAME_CONFIG;
+  private callbacks: GameEventPayloads = {};
 
   private cuoi!: Cuoi;
   private kama: number = GAME_CONSTANTS.KAMA_INITIAL;
@@ -34,11 +35,11 @@ export class GameScene extends Phaser.Scene {
     super({ key: "GameScene" });
   }
 
-  init(data: { config: GameConfig; callbacks: GameEventPayloads }) {
-    this.configData = data.config;
-    this.callbacks = data.callbacks;
+  init(data?: { config?: GameConfig; callbacks?: GameEventPayloads }) {
+    this.configData = data?.config || DEFAULT_GAME_CONFIG;
+    this.callbacks = data?.callbacks || {};
 
-    const diff = data.config.difficulty || "normal";
+    const diff = this.configData.difficulty || "normal";
     if (diff === "easy") {
       this.kamaDrainRate = 11;
       this.kamaPerTap = 10;

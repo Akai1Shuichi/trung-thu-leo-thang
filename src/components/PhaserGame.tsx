@@ -82,7 +82,6 @@ export const PhaserGame = forwardRef<PhaserGameHandle, PhaserGameProps>(
               debug: false,
             },
           },
-          scene: [GameScene],
           input: {
             touch: {
               capture: true,
@@ -97,9 +96,7 @@ export const PhaserGame = forwardRef<PhaserGameHandle, PhaserGameProps>(
         // Khởi động scene với dữ liệu config và callbacks
         game.events.once("ready", () => {
           if (!isMounted) return;
-          const scene = game.scene.getScene("GameScene") as any;
-          sceneInstanceRef.current = scene;
-          scene.scene.start("GameScene", {
+          const scene = game.scene.add("GameScene", GameScene, true, {
             config,
             callbacks: {
               onGiftReached,
@@ -109,6 +106,7 @@ export const PhaserGame = forwardRef<PhaserGameHandle, PhaserGameProps>(
               onStateChange,
             },
           });
+          sceneInstanceRef.current = scene;
         });
       };
 

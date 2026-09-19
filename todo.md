@@ -122,7 +122,7 @@ Mục tiêu: Web mini-game Trung Thu không backend, chia sẻ toàn bộ cấu 
 ---
 
 ### Giai đoạn 8: Kiểm thử & Triển khai (Testing & Deployment)
-- [ ] Kiểm thử giới hạn độ dài URL trên các trình duyệt và app nhắn tin (Zalo, Facebook Messenger, iMessage)
-- [ ] Kiểm thử Responsive trên nhiều độ phân giải màn hình
-- [ ] Build kiểm tra lỗi TypeScript và tối ưu bundle size
-- [ ] Deploy lên môi trường tĩnh (Vercel, Cloudflare Pages hoặc GitHub Pages)
+- [x] Kiểm thử giới hạn độ dài URL trên các trình duyệt và app nhắn tin (Zalo, Facebook Messenger, iMessage)
+- [x] Kiểm thử Responsive trên nhiều độ phân giải màn hình
+- [x] Build kiểm tra lỗi TypeScript và tối ưu bundle size
+- [x] Deploy lên môi trường tĩnh (Vercel, Cloudflare Pages hoặc GitHub Pages)
