@@ -104,18 +104,18 @@ Mục tiêu: Web mini-game Trung Thu không backend, chia sẻ toàn bộ cấu 
 ---
 
 ### Giai đoạn 7: Đồ họa nghệ thuật, Âm thanh & Trải nghiệm (Art & Polish)
-- [ ] Thiết kế background Parallax đa tầng thay đổi theo độ cao:
+- [x] Thiết kế background Parallax đa tầng thay đổi theo độ cao:
   - **Tầng 1 (Dưới cùng):** Làng quê Trung Thu Việt Nam, rước đèn
   - **Tầng 2:** Mái ngói rêu phong phố cổ, đèn lồng đỏ/vàng treo cao
   - **Tầng 3:** Biển mây bồng bềnh
   - **Tầng 4:** Bầu trời đêm đầy sao lấp lánh
   - **Tầng 5 (Đỉnh):** Cung Trăng vàng rực rỡ
-- [ ] Âm thanh & Âm nhạc (SFX & BGM):
+- [x] Âm thanh & Âm nhạc (SFX & BGM):
   - Tiếng tap bước nhảy vui tai
   - Âm thanh mở quà leng keng
   - Âm thanh chiến thắng lên tới Cung Trăng
   - Nút bật/tắt âm thanh (Mute/Unmute)
-- [ ] Tối ưu hóa Mobile & Touch:
+- [x] Tối ưu hóa Mobile & Touch:
   - Ngăn double-tap phóng to màn hình (`touch-action: manipulation`)
   - Vùng bấm tap nhạy, mượt mà trên điện thoại
 
