@@ -21,6 +21,14 @@ import {
   Zap,
   Check as CheckIcon,
 } from "lucide-react";
+import {
+  Badge,
+  Button,
+  Field,
+  Panel,
+  SectionHeader,
+  buttonClassName,
+} from "@/components/ui";
 
 type CheckpointType = "message" | "quiz";
 
@@ -407,181 +415,179 @@ export const GameCreator: React.FC = () => {
   const optionLetters = ["A", "B", "C", "D"];
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl p-5 sm:p-8 shadow-2xl border border-amber-200">
-      {/* Tiêu đề & Giới thiệu tinh gọn */}
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-900 rounded-full text-xs font-bold mb-2 uppercase tracking-wide">
-          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-          <span>Tạo Chặng Leo Trung Thu Cá Nhân</span>
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-amber-950 mb-1.5 tracking-tight">
-          Thiết Lập Game Leo Cung Trăng 🌕
+    <Panel tone="light" className="mx-auto w-full max-w-[720px] p-5 sm:p-8">
+      <header className="mb-7 border-b border-ink-900/10 pb-6 text-center">
+        <Badge tone="success" className="mb-3">
+          <Sparkles className="size-3.5" />
+          Tạo hành trình riêng
+        </Badge>
+        <h1 className="mb-2 text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl">
+          Thiết lập game Leo Cung Trăng
         </h1>
-        <p className="text-xs sm:text-sm text-amber-800/80 max-w-md mx-auto leading-relaxed">
-          Tùy chỉnh số bậc, cài đặt câu hỏi trắc nghiệm vượt thang và gửi gắm lời chúc Trung Thu ấm áp.
+        <p className="mx-auto max-w-lg text-sm leading-relaxed text-ink-600">
+          Chọn nhịp chơi, đặt những mốc bất ngờ rồi gửi cả hành trình bằng một đường link.
         </p>
-      </div>
+      </header>
 
       {/* Preset mẫu gợi ý nhanh */}
-      <div className="mb-6 p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200">
-        <div className="flex items-center justify-between text-xs font-bold text-amber-900 mb-2">
-          <span>Chọn nhanh mẫu có sẵn:</span>
+      <Panel tone="subtle" className="mb-6 p-4">
+        <div className="mb-3 flex items-center justify-between text-sm font-semibold text-ink-900">
+          <span>Bắt đầu nhanh với mẫu có sẵn</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {PRESET_TEMPLATES.map((tmpl, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => applyPreset(tmpl)}
-              className="text-left p-2.5 bg-white hover:bg-amber-100/50 hover:border-amber-400 rounded-xl border border-amber-200 transition text-xs font-medium cursor-pointer shadow-sm"
+              aria-pressed={
+                steps === tmpl.config.steps &&
+                receiverName === (tmpl.config.receiverName || "") &&
+                difficulty === (tmpl.config.difficulty || "normal")
+              }
+              className="focus-ring min-h-16 rounded-[var(--radius-sm)] border border-ink-900/10 bg-moon-50 p-3 text-left text-xs font-medium transition-colors hover:border-gold-500/50 hover:bg-moon-100 aria-pressed:border-gold-500 aria-pressed:bg-gold-500/10"
             >
-              <div className="flex items-center gap-1.5 font-bold text-amber-950 mb-0.5">
+              <div className="mb-1 flex items-center gap-1.5 font-bold text-ink-900">
                 <span>{tmpl.icon}</span>
                 <span>{tmpl.name}</span>
               </div>
-              <p className="text-[11px] text-amber-800/70 line-clamp-1">{tmpl.description}</p>
+              <p className="line-clamp-2 text-[11px] leading-4 text-ink-600">{tmpl.description}</p>
             </button>
           ))}
         </div>
-      </div>
+      </Panel>
 
       {/* Thông báo lỗi nếu có */}
       {errorMessage && (
-        <div className="mb-5 p-3.5 bg-rose-50 border-2 border-rose-200 text-rose-700 text-xs sm:text-sm rounded-2xl font-semibold flex items-center gap-2 animate-fadeIn">
-          <span className="text-base">⚠️</span>
+        <div role="alert" className="ui-enter mb-5 flex items-center gap-2 rounded-[var(--radius-md)] border border-danger-600/25 bg-danger-50 p-3.5 text-xs font-semibold text-danger-700 sm:text-sm">
+          <span className="text-base" aria-hidden="true">⚠️</span>
           <span>{errorMessage}</span>
         </div>
       )}
 
-      <form onSubmit={handleGenerateLink} className="space-y-6">
+      <form onSubmit={handleGenerateLink} className="space-y-0">
         {/* ========================================================================= */}
         {/* PHẦN 1: THÔNG TIN CƠ BẢN & ĐỘ KHÓ */}
         {/* ========================================================================= */}
-        <div className="bg-amber-50/50 p-4 sm:p-5 rounded-2xl border border-amber-200 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-black text-amber-950 uppercase tracking-wider">
-            <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[11px]">1</span>
-            <span>Thông tin & Cài đặt chặng leo</span>
+        <section aria-labelledby="creator-step-1" className="space-y-5 border-t border-ink-900/10 py-7 first:border-t-0 first:pt-0">
+          <div id="creator-step-1">
+            <SectionHeader step={1} title="Chặng leo" description="Ai sẽ nhận hành trình và nhịp leo sẽ thử thách đến đâu?" />
           </div>
 
           {/* Tên người nhận & Tên người gửi */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-bold text-amber-950 mb-1">
-                Người nhận (Tùy chọn)
-              </label>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Field id="receiver-name" label="Người nhận" optional>
               <input
+                id="receiver-name"
                 type="text"
                 maxLength={URL_CONFIG_LIMITS.MAX_NAME_LENGTH}
                 value={receiverName}
                 onChange={(e) => setReceiverName(e.target.value)}
                 placeholder="VD: Bé An, Bạn Thảo..."
-                className="w-full px-3.5 py-2 rounded-xl border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs sm:text-sm bg-white text-slate-900 font-semibold placeholder:text-slate-400"
+                className="focus-ring min-h-11 w-full rounded-[var(--radius-sm)] border border-ink-900/15 bg-white px-3.5 py-2 text-sm font-medium text-ink-900 placeholder:text-ink-600/55"
               />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-amber-950 mb-1">
-                Người gửi (Tùy chọn)
-              </label>
+            </Field>
+            <Field id="creator-name" label="Người gửi" optional>
               <input
+                id="creator-name"
                 type="text"
                 maxLength={URL_CONFIG_LIMITS.MAX_NAME_LENGTH}
                 value={creatorName}
                 onChange={(e) => setCreatorName(e.target.value)}
                 placeholder="VD: Chú Cuội, Anh Toàn..."
-                className="w-full px-3.5 py-2 rounded-xl border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs sm:text-sm bg-white text-slate-900 font-semibold placeholder:text-slate-400"
+                className="focus-ring min-h-11 w-full rounded-[var(--radius-sm)] border border-ink-900/15 bg-white px-3.5 py-2 text-sm font-medium text-ink-900 placeholder:text-ink-600/55"
               />
-            </div>
+            </Field>
           </div>
 
           {/* Số bậc thang & Độ khó */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-            <div>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Field id="steps" label="Số bậc thang" helper="Từ 20 đến 200 bậc.">
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-bold text-amber-950">
-                  Số bậc thang
-                </label>
-                <span className="text-xs font-mono font-black text-amber-600 px-2 py-0.5 bg-amber-100 rounded-lg">
+                <span className="text-xs text-ink-600">Độ dài hành trình</span>
+                <span className="rounded-full bg-gold-500/12 px-2.5 py-1 font-mono text-xs font-bold text-gold-700">
                   {steps} bậc
                 </span>
               </div>
               <input
+                id="steps"
                 type="range"
                 min={URL_CONFIG_LIMITS.MIN_STEPS}
                 max={URL_CONFIG_LIMITS.MAX_STEPS}
                 step={5}
                 value={steps}
                 onChange={(e) => setSteps(Number(e.target.value))}
-                className="w-full accent-amber-500 cursor-pointer"
+                className="w-full cursor-pointer accent-gold-500"
               />
-              <div className="flex justify-between text-[10px] text-amber-700/60 mt-1 font-mono">
+              <div className="mt-1 flex justify-between font-mono text-[10px] text-ink-600/70">
                 <span>20 bậc</span>
                 <span>80 bậc</span>
                 <span>200 bậc</span>
               </div>
-            </div>
+            </Field>
 
-            <div>
-              <label className="block text-xs font-bold text-amber-950 mb-1">
-                Độ khó thể lực KAMA
-              </label>
-              <div className="grid grid-cols-3 gap-1.5">
+            <Field id="difficulty" label="Độ khó KAMA">
+              <div id="difficulty" className="grid grid-cols-3 gap-1.5 rounded-[var(--radius-sm)] bg-moon-100 p-1">
                 {(["easy", "normal", "hard"] as GameDifficulty[]).map((mode) => (
                   <button
                     key={mode}
                     type="button"
                     onClick={() => setDifficulty(mode)}
-                    className={`py-1.5 px-2 rounded-xl text-xs font-bold capitalize transition border cursor-pointer ${
+                    aria-pressed={difficulty === mode}
+                    className={`focus-ring min-h-10 rounded-lg px-2 text-xs font-semibold transition-colors ${
                       difficulty === mode
-                        ? "bg-amber-500 text-white border-amber-600 shadow-sm"
-                        : "bg-white text-slate-700 border-amber-200 hover:bg-amber-100/50"
+                        ? "bg-gold-500 text-night-950 shadow-sm"
+                        : "text-ink-600 hover:bg-white/60 hover:text-ink-900"
                     }`}
                   >
                     {mode === "easy" ? "Dễ" : mode === "normal" ? "Vừa" : "Khó"}
                   </button>
                 ))}
               </div>
-              <p className="text-[11px] text-amber-700/70 mt-1">
+              <p className="mt-1.5 text-xs text-ink-600">
                 {difficulty === "easy"
                   ? "KAMA tụt chậm, leo nhẹ nhàng"
                   : difficulty === "normal"
                   ? "Cân bằng, nhịp tap vừa phải"
                   : "KAMA tụt nhanh, cần tap liên tục!"}
               </p>
-            </div>
+            </Field>
           </div>
-        </div>
+        </section>
 
         {/* ========================================================================= */}
         {/* PHẦN 2: THỬ THÁCH & LỜI CHÚC TRÊN THANG */}
         {/* ========================================================================= */}
-        <div className="bg-amber-50/50 p-4 sm:p-5 rounded-2xl border border-amber-200 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs font-black text-amber-950 uppercase tracking-wider">
-              <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[11px]">2</span>
-              <span>Mốc Thử Thách & Lời Chúc ({checkpoints.length}/{URL_CONFIG_LIMITS.MAX_GIFTS})</span>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleAddCheckpoint}
-              disabled={checkpoints.length >= URL_CONFIG_LIMITS.MAX_GIFTS}
-              className="text-xs font-bold px-3 py-1.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-xl flex items-center gap-1 transition cursor-pointer shadow-sm"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Thêm mốc</span>
-            </button>
+        <section aria-labelledby="creator-step-2" className="space-y-5 border-t border-ink-900/10 py-7">
+          <div id="creator-step-2">
+            <SectionHeader
+              step={2}
+              title="Mốc bất ngờ"
+              description={`${checkpoints.length}/${URL_CONFIG_LIMITS.MAX_GIFTS} mốc lời chúc hoặc câu hỏi trên đường leo.`}
+              action={
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleAddCheckpoint}
+                  disabled={checkpoints.length >= URL_CONFIG_LIMITS.MAX_GIFTS}
+                >
+                  <Plus className="size-4" />
+                  <span className="hidden sm:inline">Thêm mốc</span>
+                </Button>
+              }
+            />
           </div>
 
           {/* Cài đặt Cơ hội vượt qua (Hiển thị nếu có ít nhất 1 mốc câu hỏi trắc nghiệm) */}
           {hasAnyQuiz && (
-            <div className="p-3.5 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn">
+            <Panel tone="subtle" className="ui-enter flex flex-col justify-between gap-3 border-success-600/20 bg-success-50 p-4 sm:flex-row sm:items-center">
               <div>
-                <div className="text-xs font-black text-emerald-950 flex items-center gap-1.5">
-                  <Zap className="w-4 h-4 text-emerald-600 fill-emerald-600" />
-                  <span>Số cơ hội vượt qua nếu không trả lời được (Pass Chances)</span>
+                <div className="flex items-center gap-1.5 text-sm font-bold text-success-700">
+                  <Zap className="size-4 fill-current" />
+                  <span>Lượt trợ giúp</span>
                 </div>
-                <p className="text-[11px] text-emerald-800/80 mt-0.5 leading-relaxed">
-                  Lượt cứu trợ cho phép người chơi bỏ qua câu hỏi khó để tiếp tục leo thang (Mặc định: 1 lượt).
+                <p className="mt-0.5 text-xs leading-relaxed text-ink-600">
+                  Cho phép người chơi bỏ qua câu hỏi khó để tiếp tục hành trình.
                 </p>
               </div>
 
@@ -589,179 +595,176 @@ export const GameCreator: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setQuizPassChances(Math.max(0, quizPassChances - 1))}
-                  className="w-8 h-8 rounded-xl bg-white border border-emerald-300 text-emerald-800 font-black text-sm flex items-center justify-center hover:bg-emerald-100 transition cursor-pointer"
+                  aria-label="Giảm lượt trợ giúp"
+                  className="focus-ring flex size-11 items-center justify-center rounded-[var(--radius-sm)] border border-success-600/25 bg-white text-sm font-bold text-success-700 transition-colors hover:bg-success-50"
                 >
                   -
                 </button>
-                <span className="w-10 text-center font-mono font-black text-base text-emerald-950 bg-white py-1 rounded-xl border border-emerald-200">
+                <span className="w-10 text-center font-mono text-base font-bold text-success-700">
                   {quizPassChances}
                 </span>
                 <button
                   type="button"
                   onClick={() => setQuizPassChances(Math.min(URL_CONFIG_LIMITS.MAX_PASS_CHANCES, quizPassChances + 1))}
-                  className="w-8 h-8 rounded-xl bg-white border border-emerald-300 text-emerald-800 font-black text-sm flex items-center justify-center hover:bg-emerald-100 transition cursor-pointer"
+                  aria-label="Tăng lượt trợ giúp"
+                  className="focus-ring flex size-11 items-center justify-center rounded-[var(--radius-sm)] border border-success-600/25 bg-white text-sm font-bold text-success-700 transition-colors hover:bg-success-50"
                 >
                   +
                 </button>
               </div>
-            </div>
+            </Panel>
           )}
 
           {/* Danh sách các card mốc nấc thang */}
           <div className="space-y-3">
             {checkpoints.length === 0 ? (
-              <div className="p-6 text-center bg-white rounded-2xl border-2 border-dashed border-amber-200 text-xs text-amber-800/70">
+              <div className="rounded-[var(--radius-md)] border border-dashed border-ink-900/20 bg-moon-100/35 p-6 text-center text-sm text-ink-600">
                 Chưa có mốc nào. Nhấn &ldquo;Thêm mốc&rdquo; để bắt đầu đặt lời chúc hoặc câu hỏi thử thách!
               </div>
             ) : (
               checkpoints.map((item) => (
                 <div
                   key={item.id}
-                  className="p-4 bg-white rounded-2xl border-2 border-amber-200 shadow-sm space-y-3 transition hover:border-amber-400"
+                  className="space-y-4 border-t border-ink-900/10 py-5 first:border-t-0 first:pt-0"
                 >
                   {/* Header của Card: Bậc số + Badge phân loại + Nút xóa */}
-                  <div className="flex items-center justify-between gap-2 border-b border-amber-100 pb-2.5">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1.5 bg-amber-100 text-amber-950 px-2.5 py-1 rounded-xl font-bold text-xs">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
+                      <div className="flex items-center gap-1.5 rounded-full bg-moon-100 px-3 py-1.5 text-xs font-semibold text-ink-900">
                         <span>Bậc số:</span>
                         <input
+                          aria-label={`Bậc cho mốc ${item.type === "quiz" ? "câu hỏi" : "lời chúc"}`}
                           type="number"
                           min={1}
                           max={steps - 1}
                           value={item.step}
                           onChange={(e) => handleUpdateCheckpoint(item.id, { step: Number(e.target.value) })}
-                          className="w-12 px-1 py-0.5 bg-white border border-amber-300 rounded font-mono font-black text-center text-xs text-slate-900"
+                          className="focus-ring w-12 rounded-md border border-ink-900/15 bg-white px-1 py-0.5 text-center font-mono text-xs font-bold text-ink-900"
                           required
                         />
                       </div>
 
-                      <span
-                        className={`px-2 py-0.5 text-[10px] font-black rounded-lg shadow-xs flex items-center gap-1 ${
-                          item.type === "quiz"
-                            ? "bg-amber-500 text-white"
-                            : "bg-rose-500 text-white"
-                        }`}
-                      >
+                      <Badge tone={item.type === "quiz" ? "gold" : "neutral"} className="border-ink-900/10 bg-white text-ink-600">
                         {item.type === "quiz" ? (
                           <>
-                            <HelpCircle className="w-3 h-3" />
+                            <HelpCircle className="size-3" />
                             <span>Câu hỏi trắc nghiệm</span>
                           </>
                         ) : (
                           <>
-                            <GiftIcon className="w-3 h-3" />
+                            <GiftIcon className="size-3" />
                             <span>Lời chúc mừng</span>
                           </>
                         )}
-                      </span>
+                      </Badge>
                     </div>
 
                     <div className="flex items-center gap-1">
                       {item.type === "quiz" && (
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleApplySampleRiddle(item.id)}
-                          className="text-[11px] text-amber-700 hover:text-amber-900 font-semibold px-2 py-1 rounded-lg hover:bg-amber-50 transition cursor-pointer"
+                          className="px-2 text-xs text-ink-600"
                           title="Điền ngẫu nhiên 1 câu đố Trung Thu vui"
                         >
-                          Đổi câu đố mẫu ✨
-                        </button>
+                          Đổi câu mẫu
+                        </Button>
                       )}
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handleRemoveCheckpoint(item.id)}
-                        className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                        className="px-3 text-danger-600 hover:bg-danger-50"
                         title="Xóa mốc này"
+                        aria-label="Xóa mốc này"
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                        <Trash2 className="size-4" />
+                      </Button>
                     </div>
                   </div>
 
                   {/* 2 Options lựa chọn rõ ràng: Lời chúc mừng HOẶC Câu hỏi trắc nghiệm */}
-                  <div className="grid grid-cols-2 p-1 bg-amber-100/60 rounded-xl border border-amber-200">
+                  <div className="grid grid-cols-2 rounded-[var(--radius-sm)] bg-moon-100 p-1">
                     <button
                       type="button"
                       onClick={() => handleUpdateType(item.id, "message")}
-                      className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                      aria-pressed={item.type === "message"}
+                      className={`focus-ring flex min-h-10 items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors ${
                         item.type === "message"
-                          ? "bg-white text-rose-600 shadow-sm border border-rose-200"
-                          : "text-slate-600 hover:text-slate-900"
+                          ? "bg-white text-ink-900 shadow-sm"
+                          : "text-ink-600 hover:text-ink-900"
                       }`}
                     >
-                      <GiftIcon className="w-3.5 h-3.5" />
+                      <GiftIcon className="size-3.5" />
                       <span>Lời chúc mừng</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleUpdateType(item.id, "quiz")}
-                      className={`py-1.5 px-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                      aria-pressed={item.type === "quiz"}
+                      className={`focus-ring flex min-h-10 items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold transition-colors ${
                         item.type === "quiz"
-                          ? "bg-amber-500 text-white shadow-sm"
-                          : "text-slate-600 hover:text-slate-900"
+                          ? "bg-gold-500 text-night-950 shadow-sm"
+                          : "text-ink-600 hover:text-ink-900"
                       }`}
                     >
-                      <HelpCircle className="w-3.5 h-3.5" />
+                      <HelpCircle className="size-3.5" />
                       <span>Câu hỏi trắc nghiệm</span>
                     </button>
                   </div>
 
                   {/* Khối nhập tương ứng với lựa chọn */}
                   {item.type === "message" ? (
-                    <div className="space-y-1 pt-1">
-                      <div className="flex justify-between items-center">
-                        <label className="text-[11px] font-bold text-amber-900 flex items-center gap-1">
-                          <GiftIcon className="w-3 h-3 text-rose-500" />
-                          <span>Nội dung lời chúc mừng / quà tặng:</span>
-                        </label>
-                        <span className="text-[10px] text-amber-700/60 font-mono">
-                          {item.message.length}/{URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH}
-                        </span>
-                      </div>
+                    <Field
+                      id={`${item.id}-message`}
+                      label="Nội dung lời chúc hoặc quà tặng"
+                      helper={`${item.message.length}/${URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH} ký tự`}
+                    >
                       <input
+                        id={`${item.id}-message`}
                         type="text"
                         maxLength={URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH}
                         value={item.message}
                         onChange={(e) => handleUpdateCheckpoint(item.id, { message: e.target.value })}
                         placeholder="VD: Một chiếc bánh nướng thập cẩm thơm ngon! Chúc bạn vui vẻ 🥮"
-                        className="w-full px-3 py-2 rounded-lg border border-amber-300 text-xs sm:text-sm bg-white text-slate-900 font-semibold focus:ring-1 focus:ring-amber-500 placeholder:text-slate-400"
+                        className="focus-ring min-h-11 w-full rounded-[var(--radius-sm)] border border-ink-900/15 bg-white px-3 text-sm font-medium text-ink-900 placeholder:text-ink-600/55"
                         required
                       />
-                    </div>
+                    </Field>
                   ) : (
-                    <div className="p-3 bg-amber-50/70 rounded-xl border border-amber-200 space-y-2.5">
-                      <div className="flex justify-between items-center">
-                        <label className="text-[11px] font-black text-amber-950 flex items-center gap-1">
-                          <HelpCircle className="w-3.5 h-3.5 text-amber-600" />
-                          <span>Nội dung câu hỏi trắc nghiệm (phải trả lời đúng mới qua thang)</span>
-                        </label>
-                        <span className="text-[10px] text-amber-700/60 font-mono">
-                          {item.quizQuestion.length}/{URL_CONFIG_LIMITS.MAX_QUESTION_LENGTH}
-                        </span>
-                      </div>
-
-                      <input
-                        type="text"
-                        maxLength={URL_CONFIG_LIMITS.MAX_QUESTION_LENGTH}
-                        value={item.quizQuestion}
-                        onChange={(e) => handleUpdateCheckpoint(item.id, { quizQuestion: e.target.value })}
-                        placeholder="VD: Chú Cuội ngồi dưới gốc cây gì?"
-                        className="w-full px-3 py-1.5 rounded-lg border border-amber-300 text-xs sm:text-sm bg-white text-slate-900 font-semibold focus:ring-1 focus:ring-amber-500"
-                        required
-                      />
+                    <Panel tone="subtle" className="space-y-3 p-4">
+                      <Field
+                        id={`${item.id}-question`}
+                        label="Nội dung câu hỏi"
+                        helper={`Người chơi phải trả lời đúng để đi tiếp · ${item.quizQuestion.length}/${URL_CONFIG_LIMITS.MAX_QUESTION_LENGTH} ký tự`}
+                      >
+                        <input
+                          id={`${item.id}-question`}
+                          type="text"
+                          maxLength={URL_CONFIG_LIMITS.MAX_QUESTION_LENGTH}
+                          value={item.quizQuestion}
+                          onChange={(e) => handleUpdateCheckpoint(item.id, { quizQuestion: e.target.value })}
+                          placeholder="VD: Chú Cuội ngồi dưới gốc cây gì?"
+                          className="focus-ring min-h-11 w-full rounded-[var(--radius-sm)] border border-ink-900/15 bg-white px-3 text-sm font-medium text-ink-900"
+                          required
+                        />
+                      </Field>
 
                       {/* Danh sách các đáp án lựa chọn */}
-                      <div className="space-y-1.5 pt-1">
-                        <div className="text-[10px] font-bold text-amber-800/80 flex items-center justify-between">
-                          <span>Các phương án lựa chọn (Bấm nút tròn để chọn đáp án ĐÚNG):</span>
+                      <div className="space-y-2 pt-1">
+                        <div className="flex items-center justify-between gap-3 text-xs font-semibold text-ink-600">
+                          <span>Chọn chữ cái để đánh dấu đáp án đúng</span>
                           {item.quizOptions.length < URL_CONFIG_LIMITS.MAX_OPTIONS && (
                             <button
                               type="button"
                               onClick={() => handleAddOption(item.id)}
-                              className="text-amber-700 hover:text-amber-900 font-bold underline cursor-pointer"
+                              className="focus-ring min-h-11 rounded-lg px-2 font-semibold text-gold-700 hover:bg-gold-500/10"
                             >
-                              + Thêm phương án
+                              + Thêm đáp án
                             </button>
                           )}
                         </div>
@@ -773,10 +776,12 @@ export const GameCreator: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleUpdateCheckpoint(item.id, { quizCorrectIndex: optIdx })}
-                                className={`w-6 h-6 rounded-lg text-xs font-black flex items-center justify-center shrink-0 cursor-pointer border transition ${
+                                aria-pressed={isCorrect}
+                                aria-label={`Đặt đáp án ${optionLetters[optIdx] || optIdx + 1} là đáp án đúng`}
+                                className={`focus-ring flex size-11 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border text-xs font-bold transition-colors ${
                                   isCorrect
-                                    ? "bg-emerald-500 border-emerald-600 text-white shadow-xs"
-                                    : "bg-white border-amber-300 text-slate-700 hover:bg-amber-100"
+                                    ? "border-success-600 bg-success-600 text-white"
+                                    : "border-ink-900/15 bg-white text-ink-700 hover:bg-moon-100"
                                 }`}
                                 title={isCorrect ? "Đáp án này là ĐÚNG" : "Bấm để đặt làm đáp án ĐÚNG"}
                               >
@@ -784,6 +789,7 @@ export const GameCreator: React.FC = () => {
                               </button>
 
                               <input
+                                aria-label={`Nội dung đáp án ${optionLetters[optIdx] || optIdx + 1}`}
                                 type="text"
                                 maxLength={URL_CONFIG_LIMITS.MAX_OPTION_LENGTH}
                                 value={opt}
@@ -793,17 +799,17 @@ export const GameCreator: React.FC = () => {
                                   handleUpdateCheckpoint(item.id, { quizOptions: newOpts });
                                 }}
                                 placeholder={`Đáp án ${optionLetters[optIdx] || optIdx + 1}`}
-                                className={`flex-1 px-2.5 py-1 rounded-lg border text-xs sm:text-sm font-medium focus:ring-1 bg-white text-slate-900 ${
+                                className={`focus-ring min-h-11 min-w-0 flex-1 rounded-[var(--radius-sm)] border bg-white px-3 text-sm font-medium text-ink-900 ${
                                   isCorrect
-                                    ? "border-emerald-400 bg-emerald-50/30 ring-emerald-400"
-                                    : "border-amber-200 focus:ring-amber-500"
+                                    ? "border-success-600/45 bg-success-50"
+                                    : "border-ink-900/15"
                                 }`}
                                 required
                               />
 
                               {isCorrect && (
-                                <span className="text-[10px] font-bold text-emerald-700 shrink-0 flex items-center gap-0.5">
-                                  <CheckIcon className="w-3 h-3" />
+                                <span className="hidden shrink-0 items-center gap-0.5 text-xs font-semibold text-success-700 sm:flex">
+                                  <CheckIcon className="size-3.5" />
                                   <span>Đúng</span>
                                 </span>
                               )}
@@ -812,43 +818,43 @@ export const GameCreator: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveOption(item.id, optIdx)}
-                                  className="p-1 text-slate-400 hover:text-rose-500 rounded transition cursor-pointer"
+                                  aria-label={`Xóa đáp án ${optionLetters[optIdx] || optIdx + 1}`}
+                                  className="focus-ring flex size-11 shrink-0 items-center justify-center rounded-[var(--radius-sm)] text-ink-600 transition-colors hover:bg-danger-50 hover:text-danger-600"
                                   title="Xóa phương án này"
                                 >
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <Trash2 className="size-4" />
                                 </button>
                               )}
                             </div>
                           );
                         })}
                       </div>
-                    </div>
+                    </Panel>
                   )}
                 </div>
               ))
             )}
           </div>
-        </div>
+        </section>
 
         {/* ========================================================================= */}
         {/* PHẦN 3: VỀ ĐÍCH & LỜI CHÚC CUNG TRĂNG CUỐI CÙNG */}
         {/* ========================================================================= */}
-        <div className="bg-amber-50/50 p-4 sm:p-5 rounded-2xl border border-amber-200 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-black text-amber-950 uppercase tracking-wider">
-            <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-[11px]">3</span>
-            <span>Về Đích & Thông Điệp Cung Trăng</span>
+        <section aria-labelledby="creator-step-3" className="space-y-5 border-t border-ink-900/10 py-7">
+          <div id="creator-step-3">
+            <SectionHeader step={3} title="Lời chúc & chia sẻ" description="Viết thông điệp xuất hiện khi người nhận chạm đến Cung Trăng." />
           </div>
 
           {/* Sơ đồ chặng leo trực quan */}
-          <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 text-white">
-            <div className="flex items-center justify-between text-[11px] font-bold text-amber-300 mb-1.5">
+          <Panel tone="dark" className="p-4">
+            <div className="mb-2 flex items-center justify-between text-xs font-semibold text-gold-300">
               <span>Sơ đồ chặng leo</span>
-              <span className="text-slate-400 font-normal">Đích: Bậc {steps} 🌕</span>
+              <span className="font-normal text-moon-100/55">Đích: bậc {steps} 🌕</span>
             </div>
 
-            <div className="relative w-full h-7 bg-slate-800 rounded-full flex items-center px-3 border border-slate-700">
-              <div className="absolute left-3 right-8 h-1 bg-slate-700 rounded-full" />
-              <span className="text-xs mr-auto z-10" title="Xuất phát">
+            <div className="relative flex h-8 w-full items-center rounded-full border border-white/10 bg-night-950/70 px-3">
+              <div className="absolute left-3 right-8 h-1 rounded-full bg-white/12" />
+              <span className="z-10 mr-auto text-xs" title="Xuất phát">
                 🏡
               </span>
 
@@ -858,100 +864,96 @@ export const GameCreator: React.FC = () => {
                 return (
                   <div
                     key={i}
-                    className="absolute transform -translate-x-1/2 z-10 group cursor-pointer"
+                    className="group absolute z-10 -translate-x-1/2 transform cursor-pointer"
                     style={{ left: `${leftPercent}%` }}
                   >
                     <span className="text-sm">{isQ ? "❓" : "🎁"}</span>
-                    <div className="hidden group-hover:block absolute bottom-6 left-1/2 -translate-x-1/2 bg-black/95 text-amber-200 text-[10px] py-1 px-2 rounded-lg whitespace-nowrap z-20 shadow-lg border border-amber-400/40">
+                    <div className="absolute bottom-7 left-1/2 z-20 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-gold-400/30 bg-night-950 px-2 py-1 text-[10px] text-gold-300 shadow-lg group-hover:block">
                       Bậc {c.step}: {isQ ? "Câu hỏi trắc nghiệm" : "Lời chúc mừng"}
                     </div>
                   </div>
                 );
               })}
 
-              <span className="text-sm ml-auto z-10" title="Cung Trăng">
+              <span className="z-10 ml-auto text-sm" title="Cung Trăng">
                 🌕
               </span>
             </div>
-          </div>
+          </Panel>
 
           {/* Lời chúc cuối cùng */}
-          <div>
-            <div className="flex justify-between items-center mb-1">
-              <label className="text-xs font-bold text-amber-950">
-                🌕 Lời chúc Cung Trăng cuối cùng
-              </label>
-              <span className="text-[10px] text-amber-700/60 font-mono">
-                {finalMessage.length}/{URL_CONFIG_LIMITS.MAX_FINAL_MESSAGE_LENGTH}
-              </span>
-            </div>
+          <Field
+            id="final-message"
+            label="Lời chúc trên Cung Trăng"
+            helper={`${finalMessage.length}/${URL_CONFIG_LIMITS.MAX_FINAL_MESSAGE_LENGTH} ký tự`}
+          >
             <textarea
+              id="final-message"
               rows={3}
               maxLength={URL_CONFIG_LIMITS.MAX_FINAL_MESSAGE_LENGTH}
               value={finalMessage}
               onChange={(e) => setFinalMessage(e.target.value)}
               placeholder="Lời chúc ý nghĩa nhất gửi đến người nhận khi chạm đỉnh Cung Trăng..."
-              className="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs sm:text-sm bg-white text-slate-900 font-semibold placeholder:text-slate-400 leading-relaxed"
+              className="focus-ring w-full resize-y rounded-[var(--radius-sm)] border border-ink-900/15 bg-white px-3.5 py-3 text-sm font-medium leading-relaxed text-ink-900 placeholder:text-ink-600/55"
               required
             />
-          </div>
-        </div>
+          </Field>
 
-        {/* Nút Tạo link */}
-        <button
-          type="submit"
-          className="w-full py-4 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-xl shadow-orange-500/25 transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <Share2 className="w-5 h-5" />
-          <span>Tạo Đường Link Chia Sẻ</span>
-        </button>
+          <Button type="submit" size="lg" fullWidth>
+            <Share2 className="size-5" />
+            <span>Tạo đường link chia sẻ</span>
+          </Button>
+        </section>
       </form>
 
       {/* ========================================================================= */}
       {/* KHU VỰC KẾT QUẢ TẠO LINK CHIA SẺ */}
       {/* ========================================================================= */}
       {generatedUrl && (
-        <div className="mt-8 p-5 sm:p-6 bg-gradient-to-b from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-3xl animate-fadeIn shadow-lg">
-          <div className="flex items-center gap-2 text-emerald-900 font-extrabold text-base mb-1.5">
-            <span>🎉 Đường Link Game Đã Sẵn Sàng!</span>
+        <Panel tone="subtle" className="ui-enter mt-2 border-success-600/25 bg-success-50 p-5 sm:p-6">
+          <div className="mb-1.5 flex items-center gap-2 text-base font-bold text-success-700">
+            <span>Đường link đã sẵn sàng</span>
           </div>
-          <p className="text-xs text-emerald-800 mb-3">
-            Tất cả nấc thang, câu đố và lời chúc đã được đóng gói trọn vẹn trong URL. Bạn chỉ cần sao chép và gửi cho bạn bè qua Zalo, Messenger, SMS!
+          <p className="mb-3 text-sm leading-relaxed text-ink-600">
+            Toàn bộ chặng leo và lời chúc nằm trong URL này. Sao chép hoặc chia sẻ trực tiếp cho người nhận.
           </p>
 
-          <div className="p-3 bg-white border border-emerald-200 rounded-2xl text-xs font-mono text-slate-600 break-all select-all mb-4 max-h-24 overflow-y-auto shadow-inner">
+          <div className="mb-4 max-h-24 select-all overflow-y-auto break-all rounded-[var(--radius-sm)] border border-success-600/20 bg-white p-3 font-mono text-xs text-ink-600">
             {generatedUrl}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <button
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+            <Button
               onClick={handleCopy}
-              className="py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer shadow-md"
+              variant="primary"
+              fullWidth
             >
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              <span>{copied ? "Đã sao chép!" : "Sao chép Link"}</span>
-            </button>
+              {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+              <span>{copied ? "Đã sao chép" : "Sao chép"}</span>
+            </Button>
 
-            <button
+            <Button
               onClick={handleNativeShare}
-              className="py-3 px-4 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer shadow-md"
+              variant="secondary"
+              fullWidth
+              className="border-success-600/30 text-success-700 hover:bg-success-600/8"
             >
-              <Share2 className="w-4 h-4" />
-              <span>Chia sẻ nhanh</span>
-            </button>
+              <Share2 className="size-4" />
+              <span>Chia sẻ</span>
+            </Button>
 
             <a
               href={generatedUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="py-3 px-4 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer shadow-md text-center"
+              className={buttonClassName({ variant: "ghost", fullWidth: true, className: "text-ink-900" })}
             >
-              <Play className="w-4 h-4 fill-white" />
-              <span>Chơi thử ngay</span>
+              <Play className="size-4 fill-current" />
+              <span>Chơi thử</span>
             </a>
           </div>
-        </div>
+        </Panel>
       )}
-    </div>
+    </Panel>
   );
 };

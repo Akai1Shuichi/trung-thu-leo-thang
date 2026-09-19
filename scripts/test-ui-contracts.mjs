@@ -7,6 +7,7 @@ const uiIndex = readFileSync(new URL("../src/components/ui/index.ts", import.met
 const iconButton = readFileSync(new URL("../src/components/ui/IconButton.tsx", import.meta.url), "utf8");
 const modalShell = readFileSync(new URL("../src/components/ui/ModalShell.tsx", import.meta.url), "utf8");
 const home = readFileSync(new URL("../src/app/page.tsx", import.meta.url), "utf8");
+const creator = readFileSync(new URL("../src/components/GameCreator.tsx", import.meta.url), "utf8");
 
 test("defines the shared semantic design tokens", () => {
   for (const token of [
@@ -52,4 +53,12 @@ test("home has one primary action and a cardless process flow", () => {
   assert.match(home, /aria-label="Cách tạo hành trình"/);
   assert.match(home, /<ol/);
   assert.doesNotMatch(home, /grid-cols-3/);
+});
+
+test("creator exposes the approved three-step flow", () => {
+  for (const label of ["Chặng leo", "Mốc bất ngờ", "Lời chúc & chia sẻ"]) {
+    assert.match(creator, new RegExp(label));
+  }
+  assert.match(creator, /role="alert"/);
+  assert.match(creator, /aria-pressed=/);
 });
