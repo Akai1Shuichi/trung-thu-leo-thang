@@ -96,10 +96,10 @@ Mục tiêu: Web mini-game Trung Thu không backend, chia sẻ toàn bộ cấu 
 ---
 
 ### Giai đoạn 6: Màn hình Landing Page (`/`)
-- [ ] Giao diện mở đầu ấm cúng mang phong cách Trung Thu
-- [ ] Lời giới thiệu game và cách thức hoạt động
-- [ ] Nút CTA: **"Tạo game ngay"** (dẫn tới `/create`)
-- [ ] Nút **"Chơi mẫu"** (dẫn tới `/play` với một cấu hình Trung Thu mẫu tạo sẵn)
+- [x] Giao diện mở đầu ấm cúng mang phong cách Trung Thu
+- [x] Lời giới thiệu game và cách thức hoạt động
+- [x] Nút CTA: **"Tạo game ngay"** (dẫn tới `/create`)
+- [x] Nút **"Chơi mẫu"** (dẫn tới `/play` với một cấu hình Trung Thu mẫu tạo sẵn)
 
 ---
 
