@@ -154,6 +154,47 @@ a {
   animation: moonFloat 6s ease-in-out infinite;
 }
 
+.play-frame {
+  background:
+    linear-gradient(180deg, rgb(8 6 21 / 0.08), rgb(8 6 21 / 0.28)),
+    var(--color-night-950);
+}
+
+.play-frame::before,
+.play-frame::after {
+  pointer-events: none;
+  position: absolute;
+  z-index: 20;
+  content: "";
+}
+
+.play-frame::before {
+  inset: 0;
+  border: 1px solid rgb(245 215 138 / 0.16);
+  border-radius: inherit;
+  box-shadow: inset 0 0 55px rgb(233 166 47 / 0.1);
+}
+
+.play-frame::after {
+  inset: auto 12% 0;
+  height: 90px;
+  background: linear-gradient(transparent, rgb(8 6 21 / 0.38));
+}
+
+.play-energy-bar {
+  box-shadow: 0 10px 26px rgb(8 6 21 / 0.3), inset 0 1px rgb(255 255 255 / 0.08);
+}
+
+.play-tap-hint {
+  animation: uiEnter var(--duration-slow) cubic-bezier(0.16, 1, 0.3, 1) both, hintPulse 1.8s ease-in-out infinite 0.7s;
+}
+
+@keyframes hintPulse {
+  50% {
+    box-shadow: 0 0 0 8px rgb(233 166 47 / 0), var(--shadow-control);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

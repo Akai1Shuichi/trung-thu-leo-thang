@@ -638,7 +638,7 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
-    this.cuoi.stopSlideEffect();
+    this.cuoi.resetToWaitingPose();
     this.cuoi.setPosition(this.scale.width / 2, 0);
 
     this.callbacks.onKamaChange?.(this.kama);

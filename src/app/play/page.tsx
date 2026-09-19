@@ -156,7 +156,7 @@ function PlayGameContent() {
   }
 
   return (
-    <div className="relative flex h-[100svh] w-full max-w-[420px] touch-none select-none flex-col items-center overflow-hidden bg-night-950 shadow-[var(--shadow-elevated)] sm:h-[min(92svh,820px)] sm:rounded-[var(--radius-lg)] sm:border sm:border-white/12">
+    <div className="play-frame relative flex h-[100svh] w-full max-w-[420px] touch-none select-none flex-col items-center overflow-hidden bg-night-950 shadow-[var(--shadow-elevated)] sm:h-[min(92svh,820px)] sm:rounded-[var(--radius-lg)] sm:border sm:border-gold-300/25">
       {/* Top Header Overlay */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <Link
@@ -214,14 +214,18 @@ function PlayGameContent() {
         </div>
       </div>
 
+      <div className="pointer-events-none absolute left-1/2 top-[calc(max(.75rem,env(safe-area-inset-top))+4.7rem)] z-30 -translate-x-1/2 text-center">
+        <p className="text-[9px] font-bold uppercase tracking-[0.24em] text-gold-300/70">Đường lên Cung Trăng</p>
+      </div>
+
       {/* Thanh năng lượng KAMA Overlay */}
-      <div className="pointer-events-none absolute inset-x-4 top-[calc(max(.75rem,env(safe-area-inset-top))+3.25rem)] z-30 flex justify-center">
+      <div className="pointer-events-none absolute inset-x-4 top-[calc(max(.75rem,env(safe-area-inset-top))+5.7rem)] z-30 flex justify-center">
         <KamaBar kama={kama} />
       </div>
 
       {/* Gợi ý bắt đầu chơi (ẩn khi đã bắt đầu tap) */}
       {!hasStartedClimbing && gameState === "playing" && (
-        <div className="ui-enter pointer-events-none absolute bottom-[max(4rem,env(safe-area-inset-bottom))] z-30 flex items-center gap-1.5 rounded-full border border-gold-300/50 bg-gold-500 px-4 py-2 text-xs font-semibold text-night-950 shadow-[var(--shadow-control)] sm:text-sm">
+        <div className="ui-enter play-tap-hint pointer-events-none absolute bottom-[max(4rem,env(safe-area-inset-bottom))] z-30 flex items-center gap-1.5 rounded-full border border-gold-300/50 bg-gold-500 px-4 py-2 text-xs font-semibold text-night-950 shadow-[var(--shadow-control)] sm:text-sm">
           <span aria-hidden="true">👆</span>
           <span>Chạm/Click liên tục để Cuội leo thang!</span>
         </div>
