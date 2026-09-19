@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
-import { Sparkles, RotateCcw, PlusCircle, Share2, Check } from "lucide-react";
+import { Check, PlusCircle, RotateCcw, Share2, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { Badge, Button, ModalShell, Panel, buttonClassName } from "@/components/ui";
 
 interface VictoryModalProps {
   message: string;
@@ -12,38 +13,28 @@ interface VictoryModalProps {
   onReplay: () => void;
 }
 
-export const VictoryModal: React.FC<VictoryModalProps> = ({
-  message,
-  receiverName,
-  creatorName,
-  onReplay,
-}) => {
-  const [copied, setCopied] = useState<boolean>(false);
+export function VictoryModal({ message, receiverName, creatorName, onReplay }: VictoryModalProps) {
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // Pháo hoa rực rỡ chào mừng chiến thắng
-    const duration = 3.5 * 1000;
-    const animationEnd = Date.now() + duration;
-
+    const animationEnd = Date.now() + 3500;
     const frame = () => {
       confetti({
         particleCount: 4,
         angle: 60,
         spread: 60,
         origin: { x: 0 },
-        colors: ["#fbbf24", "#f97316", "#ef4444", "#34d399", "#ffffff"],
+        colors: ["#e9a62f", "#cc8420", "#c94750", "#16836f", "#fff9ea"],
       });
       confetti({
         particleCount: 4,
         angle: 120,
         spread: 60,
         origin: { x: 1 },
-        colors: ["#fbbf24", "#f97316", "#ef4444", "#34d399", "#ffffff"],
+        colors: ["#e9a62f", "#cc8420", "#c94750", "#16836f", "#fff9ea"],
       });
 
-      if (Date.now() < animationEnd) {
-        requestAnimationFrame(frame);
-      }
+      if (Date.now() < animationEnd) requestAnimationFrame(frame);
     };
     frame();
   }, []);
@@ -56,69 +47,61 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
         setTimeout(() => setCopied(false), 2500);
       }
     } catch {
-      // Ignored
+      // Clipboard can be unavailable in restricted browser contexts.
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn select-none">
-      <div className="w-full max-w-sm bg-gradient-to-b from-amber-100 via-yellow-50 to-orange-100 rounded-3xl p-6 sm:p-7 shadow-2xl border-4 border-yellow-400 text-center relative overflow-hidden">
-        {/* Vầng trăng vàng rực rỡ */}
-        <div className="relative w-22 h-22 mx-auto mb-3">
-          <div className="absolute inset-0 bg-yellow-400/40 rounded-full blur-xl animate-pulse" />
-          <div className="w-20 h-20 bg-gradient-to-tr from-amber-400 via-yellow-200 to-amber-100 rounded-full flex items-center justify-center text-4xl shadow-xl shadow-yellow-500/50 border-3 border-white animate-bounce relative z-10">
-            🌕
-          </div>
-        </div>
+    <ModalShell labelledBy="victory-modal-title" className="text-center">
+      <div className="pointer-events-none absolute -right-10 -top-10 size-36 rounded-full bg-gold-500/14 blur-2xl" />
 
-        <div className="inline-flex items-center gap-1 text-xs font-black text-amber-700 uppercase tracking-widest mb-1">
-          <Sparkles className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-          <span>Chạm Đỉnh Cung Trăng</span>
-          <Sparkles className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-        </div>
-
-        <h2 className="text-2xl font-black text-amber-950 mb-1">
-          {receiverName ? `Chúc mừng ${receiverName}!` : "Chúc mừng bạn!"}
-        </h2>
-
-        {creatorName && (
-          <p className="text-xs text-amber-800 font-semibold mb-3">
-            Thông điệp ý nghĩa từ <span className="font-bold text-amber-950">{creatorName}</span>:
-          </p>
-        )}
-
-        {/* Lời chúc cuối cùng */}
-        <div className="bg-white/95 p-4 sm:p-5 rounded-2xl border-2 border-amber-300 mb-6 text-amber-950 font-bold text-sm sm:text-base shadow-md leading-relaxed">
-          &ldquo;{message}&rdquo;
-        </div>
-
-        {/* Các nút hành động */}
-        <div className="space-y-2.5">
-          <button
-            onClick={onReplay}
-            className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-black text-sm rounded-2xl shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition cursor-pointer"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span>Chơi lại hành trình</span>
-          </button>
-
-          <button
-            onClick={handleShareLink}
-            className="w-full py-2.5 px-4 bg-amber-200/80 hover:bg-amber-300 active:scale-95 text-amber-950 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer border border-amber-300"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
-            <span>{copied ? "Đã sao chép link game!" : "Chia sẻ link màn chơi này"}</span>
-          </button>
-
-          <Link
-            href="/create"
-            className="w-full py-2.5 px-4 bg-white hover:bg-amber-50 active:scale-95 border border-amber-300 text-amber-900 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm"
-          >
-            <PlusCircle className="w-3.5 h-3.5 text-amber-600" />
-            <span>Tự tạo game gửi tặng người khác</span>
-          </Link>
-        </div>
+      <div className="relative mx-auto mb-4 flex size-20 items-center justify-center rounded-full border border-white/70 bg-[radial-gradient(circle_at_35%_30%,#fffdf2_0%,#f8df99_42%,#e9a62f_100%)] text-4xl shadow-[0_0_48px_rgba(233,166,47,.26)]">
+        🌕
       </div>
-    </div>
+
+      <Badge tone="gold" className="mb-3 border-gold-500/20 bg-gold-500/10 text-gold-700">
+        <Sparkles className="size-3.5" />
+        Chạm đỉnh Cung Trăng
+      </Badge>
+
+      <h2 id="victory-modal-title" className="mb-1 text-2xl font-extrabold tracking-tight text-ink-900">
+        {receiverName ? `Chúc mừng ${receiverName}!` : "Chúc mừng bạn!"}
+      </h2>
+
+      {creatorName && (
+        <p className="mb-3 text-xs font-medium text-ink-600">
+          Thông điệp từ <span className="font-bold text-ink-900">{creatorName}</span>
+        </p>
+      )}
+
+      <Panel tone="subtle" className="mb-6 p-4 text-sm font-semibold leading-relaxed sm:p-5 sm:text-base">
+        &ldquo;{message}&rdquo;
+      </Panel>
+
+      <div className="space-y-2.5">
+        <Button onClick={onReplay} fullWidth>
+          <RotateCcw className="size-4" />
+          <span>Chơi lại hành trình</span>
+        </Button>
+
+        <Button
+          onClick={handleShareLink}
+          variant="secondary"
+          fullWidth
+          className="border-gold-600/25 text-gold-700 hover:bg-gold-500/10"
+        >
+          {copied ? <Check className="size-4 text-success-600" /> : <Share2 className="size-4" />}
+          <span>{copied ? "Đã sao chép link" : "Sao chép link màn chơi"}</span>
+        </Button>
+
+        <Link
+          href="/create"
+          className={buttonClassName({ variant: "ghost", fullWidth: true, className: "text-ink-700" })}
+        >
+          <PlusCircle className="size-4 text-gold-600" />
+          <span>Tự tạo game gửi tặng</span>
+        </Link>
+      </div>
+    </ModalShell>
   );
-};
+}

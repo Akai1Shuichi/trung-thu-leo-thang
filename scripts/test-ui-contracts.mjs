@@ -10,6 +10,8 @@ const home = readFileSync(new URL("../src/app/page.tsx", import.meta.url), "utf8
 const creator = readFileSync(new URL("../src/components/GameCreator.tsx", import.meta.url), "utf8");
 const play = readFileSync(new URL("../src/app/play/page.tsx", import.meta.url), "utf8");
 const kama = readFileSync(new URL("../src/components/KamaBar.tsx", import.meta.url), "utf8");
+const giftModal = readFileSync(new URL("../src/components/GiftModal.tsx", import.meta.url), "utf8");
+const victoryModal = readFileSync(new URL("../src/components/VictoryModal.tsx", import.meta.url), "utf8");
 
 test("defines the shared semantic design tokens", () => {
   for (const token of [
@@ -77,4 +79,15 @@ test("KAMA exposes a semantic progress meter", () => {
   assert.match(kama, /aria-valuenow=\{Math\.round\(percentage\)\}/);
   assert.match(kama, /aria-valuemin=\{0\}/);
   assert.match(kama, /aria-valuemax=\{100\}/);
+});
+
+test("gift and victory experiences share ModalShell", () => {
+  assert.match(giftModal, /<ModalShell/);
+  assert.match(victoryModal, /<ModalShell/);
+});
+
+test("quiz feedback is announced without relying only on color", () => {
+  assert.match(giftModal, /aria-live="polite"/);
+  assert.match(giftModal, /CheckCircle2/);
+  assert.match(giftModal, /XCircle/);
 });
