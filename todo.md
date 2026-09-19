@@ -76,18 +76,18 @@ Mục tiêu: Web mini-game Trung Thu không backend, chia sẻ toàn bộ cấu 
 ---
 
 ### Giai đoạn 5: Giao diện màn chơi & Tương tác React - Phaser (`/play`)
-- [ ] Đọc và giải mã tham số `?data=` từ URL:
+- [x] Đọc và giải mã tham số `?data=` từ URL:
   - Xử lý trạng thái tải (loading)
   - Xử lý trạng thái lỗi (nếu config sai/hỏng, hiển thị thông báo thân thiện kèm nút về `/create`)
-- [ ] UI Overlay trong khi chơi:
+- [x] UI Overlay trong khi chơi:
   - Thanh năng lượng KAMA (`KamaBar.tsx`)
   - Tiến độ leo thang (Bậc hiện tại / Tổng số bậc)
   - Nút Pause / Âm thanh
-- [ ] Modal mở quà (`GiftModal.tsx`):
+- [x] Modal mở quà (`GiftModal.tsx`):
   - Hiệu ứng mở hộp quà 🎁
   - Hiển thị lời nhắn của người tặng
   - Nút "Tiếp tục leo" (hồi thêm một lượng KAMA)
-- [ ] Modal chiến thắng (`VictoryModal.tsx`):
+- [x] Modal chiến thắng (`VictoryModal.tsx`):
   - Lời chúc mừng đến Cung Trăng 🌕
   - Hiển thị `finalMessage`
   - Hiệu ứng pháo hoa / hoa giấy (confetti)
