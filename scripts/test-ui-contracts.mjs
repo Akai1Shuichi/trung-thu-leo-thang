@@ -8,6 +8,8 @@ const iconButton = readFileSync(new URL("../src/components/ui/IconButton.tsx", i
 const modalShell = readFileSync(new URL("../src/components/ui/ModalShell.tsx", import.meta.url), "utf8");
 const home = readFileSync(new URL("../src/app/page.tsx", import.meta.url), "utf8");
 const creator = readFileSync(new URL("../src/components/GameCreator.tsx", import.meta.url), "utf8");
+const play = readFileSync(new URL("../src/app/play/page.tsx", import.meta.url), "utf8");
+const kama = readFileSync(new URL("../src/components/KamaBar.tsx", import.meta.url), "utf8");
 
 test("defines the shared semantic design tokens", () => {
   for (const token of [
@@ -61,4 +63,18 @@ test("creator exposes the approved three-step flow", () => {
   }
   assert.match(creator, /role="alert"/);
   assert.match(creator, /aria-pressed=/);
+});
+
+test("play surface uses mobile viewport and labelled controls", () => {
+  assert.match(play, /100svh/);
+  for (const label of ["Về trang chủ", "Bật âm thanh", "Tắt âm thanh", "Chơi lại từ đầu"]) {
+    assert.match(play, new RegExp(`aria-label=.*${label}`));
+  }
+});
+
+test("KAMA exposes a semantic progress meter", () => {
+  assert.match(kama, /role="progressbar"/);
+  assert.match(kama, /aria-valuenow=\{Math\.round\(percentage\)\}/);
+  assert.match(kama, /aria-valuemin=\{0\}/);
+  assert.match(kama, /aria-valuemax=\{100\}/);
 });

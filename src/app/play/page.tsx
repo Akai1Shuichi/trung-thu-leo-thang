@@ -9,6 +9,7 @@ import { GiftModal } from "@/components/GiftModal";
 import { VictoryModal } from "@/components/VictoryModal";
 import { PhaserGame, PhaserGameHandle } from "@/components/PhaserGame";
 import { soundEngine } from "@/lib/sound";
+import { Badge, Button, IconButton, Panel, buttonClassName } from "@/components/ui";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -126,112 +127,115 @@ function PlayGameContent() {
 
   if (error || !config) {
     return (
-      <div className="w-full max-w-md bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 text-center border-2 border-rose-300 shadow-2xl">
-        <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
-          <AlertTriangle className="w-8 h-8" />
+      <Panel tone="light" className="w-full max-w-md p-6 text-center sm:p-8">
+        <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-danger-50 text-danger-600">
+          <AlertTriangle className="size-8" />
         </div>
-        <h2 className="text-xl font-bold text-slate-800 mb-2">Đường dẫn không hợp lệ</h2>
-        <p className="text-xs sm:text-sm text-slate-600 mb-6 leading-relaxed">
+        <h2 className="mb-2 text-xl font-bold text-ink-900">Đường dẫn không hợp lệ</h2>
+        <p className="mb-6 text-sm leading-relaxed text-ink-600">
           {error || "Không tìm thấy dữ liệu trò chơi từ liên kết này."}
         </p>
         <div className="space-y-3">
           <Link
             href="/create"
-            className="block w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-2xl transition shadow-md"
+            className={buttonClassName({ variant: "primary", fullWidth: true })}
           >
             Tự tạo game mới
           </Link>
-          <button
+          <Button
             onClick={() => setFallbackToDefault(true)}
-            className="block w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition cursor-pointer"
+            variant="ghost"
+            fullWidth
+            className="text-ink-700"
           >
             Chơi màn chơi mẫu
-          </button>
+          </Button>
         </div>
-      </div>
+      </Panel>
     );
   }
 
   return (
-    <div className="relative w-full max-w-[420px] h-[92vh] max-h-[820px] bg-slate-950 rounded-3xl overflow-hidden shadow-2xl border-4 border-amber-400/40 flex flex-col items-center select-none touch-none">
+    <div className="relative flex h-[100svh] w-full max-w-[420px] touch-none select-none flex-col items-center overflow-hidden bg-night-950 shadow-[var(--shadow-elevated)] sm:h-[min(92svh,820px)] sm:rounded-[var(--radius-lg)] sm:border sm:border-white/12">
       {/* Top Header Overlay */}
-      <div className="absolute top-0 inset-x-0 z-30 p-3.5 flex items-center justify-between pointer-events-none">
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-start justify-between px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <Link
           href="/"
-          className="pointer-events-auto p-2 bg-black/60 backdrop-blur-md rounded-2xl text-amber-200 hover:bg-black/80 transition border border-amber-400/20 shadow-md"
+          aria-label="Về trang chủ"
+          className="focus-ring pointer-events-auto inline-flex size-11 items-center justify-center rounded-[var(--radius-sm)] border border-white/12 bg-night-950/72 text-gold-300 shadow-[var(--shadow-control)] backdrop-blur-md transition-colors hover:bg-night-800"
           title="Về trang chủ"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="size-4" />
         </Link>
 
         {/* Bộ đếm bậc thang & Người nhận & Cơ hội */}
-        <div className="flex flex-col items-center pointer-events-none gap-1">
+        <div className="pointer-events-none flex max-w-[54%] flex-col items-center gap-1.5">
           {config.receiverName && (
-            <div className="px-2.5 py-0.5 bg-rose-500/80 backdrop-blur-md border border-rose-300/40 rounded-full text-[10px] font-extrabold text-white flex items-center gap-1 shadow-sm">
-              <Heart className="w-2.5 h-2.5 fill-white" />
-              <span>Gửi tặng: {config.receiverName}</span>
-            </div>
+            <Badge tone="neutral" className="max-w-full bg-night-950/66 px-2.5 text-[10px] backdrop-blur-md">
+              <Heart className="size-3 shrink-0 fill-gold-400 text-gold-400" />
+              <span className="truncate">Tặng {config.receiverName}</span>
+            </Badge>
           )}
 
           <div className="flex items-center gap-2">
-            <div className="bg-black/60 backdrop-blur-md border border-amber-300/30 px-3 py-1 rounded-full text-xs font-bold text-amber-200 flex items-center gap-1.5 shadow-md">
-              <span>Bậc:</span>
-              <span className="text-amber-400 font-mono text-sm">{currentStep}</span>
-              <span className="text-slate-400">/</span>
-              <span className="text-slate-200 font-mono">{config.steps}</span>
-            </div>
+            <Badge tone="neutral" className="bg-night-950/66 font-mono backdrop-blur-md">
+              <span className="font-sans text-moon-100/60">Bậc</span>
+              <span className="text-sm text-gold-400">{currentStep}</span>
+              <span className="text-moon-100/35">/</span>
+              <span>{config.steps}</span>
+            </Badge>
 
             {(config.enableQuiz || config.gifts?.some((g) => g.quiz)) && (
-              <div className="bg-emerald-950/70 backdrop-blur-md border border-emerald-400/40 px-2.5 py-1 rounded-full text-xs font-bold text-emerald-300 flex items-center gap-1 shadow-md">
-                <Zap className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400" />
+              <Badge tone="neutral" className="bg-night-950/66 px-2.5 text-gold-300 backdrop-blur-md" title="Lượt trợ giúp">
+                <Zap className="size-3.5 fill-current" />
                 <span>{remainingPassChances}</span>
-              </div>
+              </Badge>
             )}
           </div>
         </div>
 
         {/* Điều khiển Âm thanh & Chơi lại */}
-        <div className="flex items-center gap-1.5 pointer-events-auto">
-          <button
+        <div className="pointer-events-auto flex items-center gap-1.5">
+          <IconButton
             onClick={toggleSound}
-            className="p-2 bg-black/60 backdrop-blur-md rounded-2xl text-amber-200 hover:bg-black/80 transition border border-amber-400/20 shadow-md cursor-pointer"
+            aria-label={isMuted ? "Bật âm thanh" : "Tắt âm thanh"}
             title={isMuted ? "Bật âm thanh" : "Tắt âm thanh"}
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4" />}
-          </button>
+            {isMuted ? <VolumeX className="size-4 text-red-300" /> : <Volume2 className="size-4" />}
+          </IconButton>
 
-          <button
+          <IconButton
             onClick={handleReplay}
-            className="p-2 bg-black/60 backdrop-blur-md rounded-2xl text-amber-200 hover:bg-black/80 transition border border-amber-400/20 shadow-md cursor-pointer"
+            aria-label="Chơi lại từ đầu"
             title="Chơi lại từ đầu"
           >
-            <RotateCcw className="w-4 h-4" />
-          </button>
+            <RotateCcw className="size-4" />
+          </IconButton>
         </div>
       </div>
 
       {/* Thanh năng lượng KAMA Overlay */}
-      <div className="absolute top-16 inset-x-4 z-30 flex justify-center pointer-events-none">
+      <div className="pointer-events-none absolute inset-x-4 top-[calc(max(.75rem,env(safe-area-inset-top))+3.25rem)] z-30 flex justify-center">
         <KamaBar kama={kama} />
       </div>
 
       {/* Gợi ý bắt đầu chơi (ẩn khi đã bắt đầu tap) */}
       {!hasStartedClimbing && gameState === "playing" && (
-        <div className="absolute bottom-16 z-30 px-4 py-2 bg-amber-500/90 backdrop-blur-md text-amber-950 font-extrabold text-xs sm:text-sm rounded-full shadow-xl border-2 border-white animate-bounce pointer-events-none flex items-center gap-1.5">
-          <span>👆</span>
+        <div className="ui-enter pointer-events-none absolute bottom-[max(4rem,env(safe-area-inset-bottom))] z-30 flex items-center gap-1.5 rounded-full border border-gold-300/50 bg-gold-500 px-4 py-2 text-xs font-semibold text-night-950 shadow-[var(--shadow-control)] sm:text-sm">
+          <span aria-hidden="true">👆</span>
           <span>Chạm/Click liên tục để Cuội leo thang!</span>
         </div>
       )}
 
       {/* Cảnh báo khi Cuội bị trượt tụt dốc */}
       {gameState === "sliding" && (
-        <div className="absolute top-30 z-30 px-4 py-1.5 bg-rose-600/95 text-white rounded-full text-xs font-black shadow-xl animate-bounce border-2 border-rose-300 pointer-events-none">
+        <div role="status" className="pointer-events-none absolute top-30 z-30 rounded-full border border-red-300/40 bg-danger-600 px-4 py-2 text-xs font-semibold text-white shadow-[var(--shadow-control)]">
           💨 Hết KAMA! Cuội đang trượt xuống dốc...
         </div>
       )}
 
       {/* Phaser Canvas Container */}
-      <div className="w-full h-full relative z-10">
+      <div className="relative z-10 h-full w-full">
         <PhaserGame
           ref={phaserGameRef}
           config={config}
@@ -268,10 +272,10 @@ function PlayGameContent() {
 
 export default function PlayPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-indigo-950 via-purple-950 to-slate-950 flex flex-col items-center justify-center p-2 sm:p-4">
+    <main className="app-shell flex min-h-[100svh] flex-col items-center justify-center sm:p-4">
       <Suspense
         fallback={
-          <div className="text-amber-300 text-sm font-semibold">Đang chuẩn bị Cung Trăng...</div>
+          <div className="text-sm font-semibold text-gold-300">Đang chuẩn bị Cung Trăng...</div>
         }
       >
         <PlayGameContent />

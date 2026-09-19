@@ -1,55 +1,44 @@
 "use client";
 
-import React from "react";
-import { Zap, AlertCircle } from "lucide-react";
+import { AlertCircle, Zap } from "lucide-react";
 
 interface KamaBarProps {
-  kama: number; // 0 - 100
+  kama: number;
 }
 
-export const KamaBar: React.FC<KamaBarProps> = ({ kama }) => {
+export function KamaBar({ kama }: KamaBarProps) {
   const percentage = Math.max(0, Math.min(100, kama));
-
-  // Màu sắc và hiệu ứng thanh KAMA theo các mức năng lượng
-  let barGradient = "from-emerald-500 to-teal-400";
-  let glowColor = "shadow-emerald-500/20";
-  let isLow = false;
-
-  if (percentage < 25) {
-    barGradient = "from-rose-600 via-red-500 to-amber-500 animate-pulse";
-    glowColor = "shadow-rose-500/50";
-    isLow = true;
-  } else if (percentage < 60) {
-    barGradient = "from-amber-500 to-yellow-400";
-    glowColor = "shadow-amber-500/30";
-  }
+  const isLow = percentage < 25;
+  const isMedium = percentage >= 25 && percentage < 60;
+  const fillClass = isLow ? "bg-danger-600" : isMedium ? "bg-gold-500" : "bg-success-600";
 
   return (
     <div
-      className={`w-full max-w-[280px] sm:max-w-xs bg-slate-900/85 backdrop-blur-md rounded-2xl p-2.5 border transition-all duration-300 shadow-xl ${
-        isLow ? "border-rose-500/80 ring-2 ring-rose-500/30" : "border-amber-400/30"
-      } ${glowColor} select-none`}
+      role="progressbar"
+      aria-label="Năng lượng KAMA"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(percentage)}
+      className={`night-surface w-full max-w-[280px] select-none p-2.5 transition-colors sm:max-w-xs ${
+        isLow ? "border-danger-600/60" : ""
+      }`}
     >
-      <div className="flex items-center justify-between text-[11px] font-extrabold text-amber-200 mb-1 px-1 tracking-wider">
-        <div className="flex items-center gap-1.5">
-          {isLow ? (
-            <AlertCircle className="w-3.5 h-3.5 text-rose-400 animate-bounce" />
-          ) : (
-            <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-          )}
-          <span>{isLow ? "KAMA SẮP CẠN!" : "NĂNG LƯỢNG KAMA"}</span>
+      <div className="mb-1.5 flex items-center justify-between px-0.5 text-[11px] font-semibold">
+        <div className={`flex items-center gap-1.5 ${isLow ? "text-red-300" : "text-moon-100/72"}`}>
+          {isLow ? <AlertCircle className="size-3.5" /> : <Zap className="size-3.5 text-gold-400" />}
+          <span>{isLow ? "KAMA sắp cạn" : "Năng lượng KAMA"}</span>
         </div>
-        <span className={`font-mono text-xs ${isLow ? "text-rose-400 font-black" : "text-amber-300"}`}>
+        <span className={`font-mono text-xs font-bold ${isLow ? "text-red-300" : "text-moon-50"}`}>
           {Math.round(percentage)}%
         </span>
       </div>
 
-      <div className="h-3 w-full bg-slate-950/80 rounded-full overflow-hidden p-0.5 border border-slate-800 relative">
+      <div className="h-2.5 w-full overflow-hidden rounded-full bg-night-950/85 p-0.5 ring-1 ring-white/10">
         <div
-          className={`h-full rounded-full transition-all duration-150 ease-out bg-gradient-to-r ${barGradient}`}
+          className={`h-full rounded-full transition-[width] duration-150 ease-out ${fillClass}`}
           style={{ width: `${percentage}%` }}
         />
       </div>
     </div>
   );
-};
+}
