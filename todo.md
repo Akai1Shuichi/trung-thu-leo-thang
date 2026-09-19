@@ -39,15 +39,15 @@ Mục tiêu: Web mini-game Trung Thu không backend, chia sẻ toàn bộ cấu 
 ---
 
 ### Giai đoạn 3: Trang tạo game (`/create`)
-- [ ] Thiết kế giao diện form tạo màn chơi:
+- [x] Thiết kế giao diện form tạo màn chơi:
   - Input số bậc thang (mặc định: 80, min: 20, max: 200)
   - Danh sách quà tặng: thêm/xóa quà, chọn bậc xuất hiện, nhập lời nhắn
   - Input lời chúc cuối cùng khi đến Cung Trăng
-- [ ] Kiểm tra tính hợp lệ dữ liệu trực tiếp trên form (Validation feedback)
-- [ ] Nút **"Tạo link"**:
+- [x] Kiểm tra tính hợp lệ dữ liệu trực tiếp trên form (Validation feedback)
+- [x] Nút **"Tạo link"**:
   - Chuyển đổi dữ liệu form sang `GameConfig`
   - Tạo link `/play?data=...`
-- [ ] Màn hình kết quả sau khi tạo link:
+- [x] Màn hình kết quả sau khi tạo link:
   - Hiển thị URL chia sẻ
   - Nút **"Copy Link"** (kèm thông báo toast đã copy)
   - Nút **"Chơi thử"** (chuyển hướng sang trang `/play`)
