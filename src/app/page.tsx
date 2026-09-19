@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Play, PlusCircle, Heart, Gift, Zap, ShieldCheck } from "lucide-react";
+import { Sparkles, Play, PlusCircle, Zap, ShieldCheck } from "lucide-react";
 
 export default function HomePage() {
   return (

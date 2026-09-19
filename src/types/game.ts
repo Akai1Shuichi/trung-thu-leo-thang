@@ -1,6 +1,13 @@
+export interface QuizData {
+  question: string;
+  options: string[];
+  correctIndex: number;
+}
+
 export interface Gift {
   step: number;
-  message: string;
+  message?: string;
+  quiz?: QuizData;
 }
 
 export type GameDifficulty = "easy" | "normal" | "hard";
@@ -12,6 +19,8 @@ export interface GameConfig {
   receiverName?: string;
   creatorName?: string;
   difficulty?: GameDifficulty;
+  enableQuiz?: boolean;
+  quizPassChances?: number;
 }
 
 export type GameState = "idle" | "playing" | "paused" | "gift" | "victory" | "sliding";

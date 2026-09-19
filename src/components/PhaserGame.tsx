@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useImperativeHandle, forwardRef } from "react";
-import { GameConfig, GameEventPayloads, GameState, Gift } from "@/types/game";
+import { GameConfig, GameState, Gift } from "@/types/game";
 import { GAME_CONSTANTS } from "@/game/config";
+import type * as PhaserTypes from "phaser";
 
 export interface PhaserGameHandle {
   resumeAfterGift: () => void;
@@ -31,8 +32,23 @@ export const PhaserGame = forwardRef<PhaserGameHandle, PhaserGameProps>(
     ref
   ) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const gameInstanceRef = useRef<any>(null);
-    const sceneInstanceRef = useRef<any>(null);
+    const gameInstanceRef = useRef<PhaserTypes.Game | null>(null);
+    const sceneInstanceRef = useRef<{ resumeAfterGift: () => void; restartGame: () => void } | null>(null);
+
+    const callbacksRef = useRef({
+      onGiftReached,
+      onVictory,
+      onKamaChange,
+      onStepChange,
+      onStateChange,
+    });
+    callbacksRef.current = {
+      onGiftReached,
+      onVictory,
+      onKamaChange,
+      onStepChange,
+      onStateChange,
+    };
 
     // Cung cấp các hàm điều khiển từ React xuống Phaser
     useImperativeHandle(ref, () => ({
@@ -99,14 +115,17 @@ export const PhaserGame = forwardRef<PhaserGameHandle, PhaserGameProps>(
           const scene = game.scene.add("GameScene", GameScene, true, {
             config,
             callbacks: {
-              onGiftReached,
-              onVictory,
-              onKamaChange,
-              onStepChange,
-              onStateChange,
+              onGiftReached: (gift: Gift) => callbacksRef.current.onGiftReached(gift),
+              onVictory: (msg: string) => callbacksRef.current.onVictory(msg),
+              onKamaChange: (k: number) => callbacksRef.current.onKamaChange(k),
+              onStepChange: (curr: number, tot: number) => callbacksRef.current.onStepChange(curr, tot),
+              onStateChange: (state: GameState) => callbacksRef.current.onStateChange(state),
             },
           });
-          sceneInstanceRef.current = scene;
+          sceneInstanceRef.current = scene as unknown as {
+            resumeAfterGift: () => void;
+            restartGame: () => void;
+          };
         });
       };
 

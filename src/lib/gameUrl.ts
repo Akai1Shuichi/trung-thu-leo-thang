@@ -11,6 +11,12 @@ export const URL_CONFIG_LIMITS = {
   MAX_GIFT_MESSAGE_LENGTH: 150,
   MAX_FINAL_MESSAGE_LENGTH: 300,
   MAX_NAME_LENGTH: 50,
+  MAX_QUESTION_LENGTH: 120,
+  MAX_OPTION_LENGTH: 60,
+  MIN_OPTIONS: 2,
+  MAX_OPTIONS: 4,
+  DEFAULT_QUIZ_PASS_CHANCES: 1,
+  MAX_PASS_CHANCES: 10,
 };
 
 export const DEFAULT_GAME_CONFIG: GameConfig = {
@@ -27,32 +33,67 @@ export const DEFAULT_GAME_CONFIG: GameConfig = {
   ],
   finalMessage: "Chúc bạn và gia đình một mùa Trung Thu an lành, đoàn viên và ngập tràn hạnh phúc! 🌕❤️",
   difficulty: "normal",
+  enableQuiz: false,
+  quizPassChances: 1,
 };
 
 /**
  * Làm sạch và chuẩn hóa cấu hình trò chơi:
  * - Loại bỏ khoảng trắng thừa
- * - Sắp xếp hộp quà theo thứ tự bậc tăng dần
- * - Loại bỏ các hộp quà trùng bậc thang (giữ lại quà xuất hiện sau)
+ * - Sắp xếp hộp quà/câu hỏi theo thứ tự bậc tăng dần
+ * - Chuẩn hóa câu hỏi trắc nghiệm và số cơ hội pass
  */
 export function sanitizeGameConfig(config: GameConfig): GameConfig {
   const steps = Math.floor(config.steps);
-  const giftsMap = new Map<number, string>();
+  const giftsMap = new Map<number, Gift>();
 
   if (Array.isArray(config.gifts)) {
     config.gifts.forEach((g) => {
       const step = Math.floor(g.step);
-      const msg = (g.message || "").trim().slice(0, URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH);
-      if (step > 0 && step < steps && msg.length > 0) {
-        giftsMap.set(step, msg);
+      if (step <= 0 || step >= steps) return;
+
+      let sanitizedMessage: string | undefined = undefined;
+      if (typeof g.message === "string" && g.message.trim().length > 0) {
+        sanitizedMessage = g.message.trim().slice(0, URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH);
+      }
+
+      let sanitizedQuiz = undefined;
+      if (g.quiz && typeof g.quiz === "object" && typeof g.quiz.question === "string") {
+        const qText = g.quiz.question.trim().slice(0, URL_CONFIG_LIMITS.MAX_QUESTION_LENGTH);
+        const rawOptions = Array.isArray(g.quiz.options) ? g.quiz.options : [];
+        const validOptions = rawOptions
+          .map((opt) => (typeof opt === "string" ? opt.trim().slice(0, URL_CONFIG_LIMITS.MAX_OPTION_LENGTH) : ""))
+          .filter((opt) => opt.length > 0)
+          .slice(0, URL_CONFIG_LIMITS.MAX_OPTIONS);
+
+        if (qText.length > 0 && validOptions.length >= URL_CONFIG_LIMITS.MIN_OPTIONS) {
+          const correctIndex =
+            typeof g.quiz.correctIndex === "number" && Number.isInteger(g.quiz.correctIndex)
+              ? Math.max(0, Math.min(validOptions.length - 1, g.quiz.correctIndex))
+              : 0;
+
+          sanitizedQuiz = {
+            question: qText,
+            options: validOptions,
+            correctIndex,
+          };
+        }
+      }
+
+      // Mốc hợp lệ nếu có ít nhất lời nhắn hoặc câu hỏi trắc nghiệm
+      if (sanitizedMessage || sanitizedQuiz) {
+        giftsMap.set(step, {
+          step,
+          ...(sanitizedMessage ? { message: sanitizedMessage } : {}),
+          ...(sanitizedQuiz ? { quiz: sanitizedQuiz } : {}),
+        });
       }
     });
   }
 
-  const sortedGifts: Gift[] = Array.from(giftsMap.entries())
-    .sort(([stepA], [stepB]) => stepA - stepB)
-    .slice(0, URL_CONFIG_LIMITS.MAX_GIFTS)
-    .map(([step, message]) => ({ step, message }));
+  const sortedGifts: Gift[] = Array.from(giftsMap.values())
+    .sort((a, b) => a.step - b.step)
+    .slice(0, URL_CONFIG_LIMITS.MAX_GIFTS);
 
   const sanitized: GameConfig = {
     steps,
@@ -68,6 +109,20 @@ export function sanitizeGameConfig(config: GameConfig): GameConfig {
   }
   if (config.difficulty && ["easy", "normal", "hard"].includes(config.difficulty)) {
     sanitized.difficulty = config.difficulty;
+  }
+
+  if (config.enableQuiz !== undefined) {
+    sanitized.enableQuiz = Boolean(config.enableQuiz);
+  }
+
+  if (sanitized.enableQuiz) {
+    const passChances =
+      typeof config.quizPassChances === "number" && Number.isInteger(config.quizPassChances)
+        ? Math.max(0, Math.min(URL_CONFIG_LIMITS.MAX_PASS_CHANCES, config.quizPassChances))
+        : URL_CONFIG_LIMITS.DEFAULT_QUIZ_PASS_CHANCES;
+    sanitized.quizPassChances = passChances;
+  } else if (config.quizPassChances !== undefined && Number.isInteger(config.quizPassChances)) {
+    sanitized.quizPassChances = Math.max(0, Math.min(URL_CONFIG_LIMITS.MAX_PASS_CHANCES, config.quizPassChances));
   }
 
   return sanitized;
@@ -105,14 +160,23 @@ export function validateGameConfigDetailed(config: unknown): ValidationResult {
     };
   }
 
+  if (c.quizPassChances !== undefined) {
+    if (typeof c.quizPassChances !== "number" || !Number.isInteger(c.quizPassChances) || c.quizPassChances < 0 || c.quizPassChances > URL_CONFIG_LIMITS.MAX_PASS_CHANCES) {
+      return {
+        isValid: false,
+        error: `Số cơ hội vượt qua phải là số nguyên từ 0 đến ${URL_CONFIG_LIMITS.MAX_PASS_CHANCES}.`,
+      };
+    }
+  }
+
   if (!Array.isArray(c.gifts)) {
-    return { isValid: false, error: "Danh sách quà tặng phải là một mảng." };
+    return { isValid: false, error: "Danh sách quà tặng / thử thách phải là một mảng." };
   }
 
   if (c.gifts.length > URL_CONFIG_LIMITS.MAX_GIFTS) {
     return {
       isValid: false,
-      error: `Chỉ được đặt tối đa ${URL_CONFIG_LIMITS.MAX_GIFTS} hộp quà.`,
+      error: `Chỉ được đặt tối đa ${URL_CONFIG_LIMITS.MAX_GIFTS} mốc thử thách / hộp quà.`,
     };
   }
 
@@ -120,35 +184,75 @@ export function validateGameConfigDetailed(config: unknown): ValidationResult {
   for (let i = 0; i < c.gifts.length; i++) {
     const gift = c.gifts[i];
     if (!gift || typeof gift !== "object") {
-      return { isValid: false, error: `Hộp quà thứ ${i + 1} có cấu trúc không đúng.` };
+      return { isValid: false, error: `Mốc thứ ${i + 1} có cấu trúc không đúng.` };
     }
 
     const g = gift as Record<string, unknown>;
     if (typeof g.step !== "number" || !Number.isInteger(g.step)) {
-      return { isValid: false, error: `Bậc của quà thứ ${i + 1} phải là số nguyên.` };
+      return { isValid: false, error: `Bậc của mốc thứ ${i + 1} phải là số nguyên.` };
     }
 
     if (g.step <= 0 || g.step >= c.steps) {
       return {
         isValid: false,
-        error: `Quà thứ ${i + 1} (bậc ${g.step}) phải nằm giữa bậc 1 và bậc ${c.steps - 1}.`,
+        error: `Mốc thứ ${i + 1} (bậc ${g.step}) phải nằm giữa bậc 1 và bậc ${c.steps - 1}.`,
       };
     }
 
     if (seenSteps.has(g.step)) {
-      return { isValid: false, error: `Không được đặt nhiều hộp quà tại cùng một bậc (${g.step}).` };
+      return { isValid: false, error: `Không được đặt nhiều mốc tại cùng một bậc (${g.step}).` };
     }
     seenSteps.add(g.step);
 
-    if (typeof g.message !== "string" || g.message.trim().length === 0) {
-      return { isValid: false, error: `Lời nhắn của quà tại bậc ${g.step} không được để trống.` };
+    const hasMessage = typeof g.message === "string" && g.message.trim().length > 0;
+    const hasQuiz = Boolean(g.quiz && typeof g.quiz === "object");
+
+    if (!hasMessage && !hasQuiz) {
+      return { isValid: false, error: `Mốc tại bậc ${g.step} phải có lời chúc hoặc câu hỏi trắc nghiệm.` };
     }
 
-    if (g.message.trim().length > URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH) {
+    if (hasMessage && typeof g.message === "string" && g.message.trim().length > URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH) {
       return {
         isValid: false,
-        error: `Lời nhắn quà tại bậc ${g.step} không được vượt quá ${URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH} ký tự.`,
+        error: `Lời nhắn tại bậc ${g.step} không được vượt quá ${URL_CONFIG_LIMITS.MAX_GIFT_MESSAGE_LENGTH} ký tự.`,
       };
+    }
+
+    if (hasQuiz) {
+      const q = g.quiz as Record<string, unknown>;
+      if (typeof q.question !== "string" || q.question.trim().length === 0) {
+        return { isValid: false, error: `Nội dung câu hỏi tại bậc ${g.step} không được để trống.` };
+      }
+      if (q.question.trim().length > URL_CONFIG_LIMITS.MAX_QUESTION_LENGTH) {
+        return {
+          isValid: false,
+          error: `Câu hỏi tại bậc ${g.step} không được vượt quá ${URL_CONFIG_LIMITS.MAX_QUESTION_LENGTH} ký tự.`,
+        };
+      }
+      if (!Array.isArray(q.options) || q.options.length < URL_CONFIG_LIMITS.MIN_OPTIONS || q.options.length > URL_CONFIG_LIMITS.MAX_OPTIONS) {
+        return {
+          isValid: false,
+          error: `Câu hỏi tại bậc ${g.step} phải có từ ${URL_CONFIG_LIMITS.MIN_OPTIONS} đến ${URL_CONFIG_LIMITS.MAX_OPTIONS} đáp án lựa chọn.`,
+        };
+      }
+      for (let optIdx = 0; optIdx < q.options.length; optIdx++) {
+        const opt = q.options[optIdx];
+        if (typeof opt !== "string" || opt.trim().length === 0) {
+          return { isValid: false, error: `Đáp án ${optIdx + 1} của câu hỏi tại bậc ${g.step} không được để trống.` };
+        }
+        if (opt.trim().length > URL_CONFIG_LIMITS.MAX_OPTION_LENGTH) {
+          return {
+            isValid: false,
+            error: `Đáp án ${optIdx + 1} của câu hỏi tại bậc ${g.step} không được vượt quá ${URL_CONFIG_LIMITS.MAX_OPTION_LENGTH} ký tự.`,
+          };
+        }
+      }
+      if (typeof q.correctIndex !== "number" || !Number.isInteger(q.correctIndex) || q.correctIndex < 0 || q.correctIndex >= q.options.length) {
+        return {
+          isValid: false,
+          error: `Vị trí đáp án đúng của câu hỏi tại bậc ${g.step} không hợp lệ.`,
+        };
+      }
     }
   }
 

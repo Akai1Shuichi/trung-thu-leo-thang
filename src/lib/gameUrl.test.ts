@@ -128,9 +128,104 @@ function runTests() {
   const safeSuccess = getSafeGameConfig(encoded);
   assert(safeSuccess.isDefault === false, "getSafeGameConfig nhận đúng config từ link hợp lệ");
 
-  // 8. Kiểm tra chi tiết thông báo lỗi (validateGameConfigDetailed)
-  const detailCheck = validateGameConfigDetailed({ ...sampleConfig, steps: 10 });
-  assert(detailCheck.isValid === false && Boolean(detailCheck.error?.includes("20 đến 200")), "Chi tiết lỗi mô tả đúng nguyên nhân");
+  // 9. Kiểm tra cấu hình có câu hỏi trắc nghiệm & cơ hội pass (Quiz feature)
+  const quizConfig: GameConfig = {
+    steps: 60,
+    enableQuiz: true,
+    quizPassChances: 2,
+    gifts: [
+      {
+        step: 20,
+        quiz: {
+          question: "Chú Cuội ngồi gốc cây gì?",
+          options: ["Cây bàng", "Cây đa", "Cây cau", "Cây tre"],
+          correctIndex: 1,
+        },
+        message: "Chính xác! Tặng bạn một chiếc bánh nướng thập cẩm! 🥮",
+      },
+      {
+        step: 40,
+        quiz: {
+          question: "Tết Trung Thu diễn ra vào ngày rằm tháng mấy âm lịch?",
+          options: ["Tháng 7", "Tháng 8", "Tháng 9"],
+          correctIndex: 1,
+        },
+      },
+    ],
+    finalMessage: "Chúc mừng bạn đã vượt qua tất cả câu đố để tới Cung Trăng! 🌕🎉",
+  };
+
+  assert(validateGameConfig(quizConfig), "Cấu hình chứa câu hỏi trắc nghiệm hợp lệ");
+  const encodedQuiz = encodeGameConfig(quizConfig);
+  const decodedQuiz = decodeGameConfig(encodedQuiz);
+  assert(decodedQuiz !== null, "Giải mã cấu hình Quiz thành công");
+  assert(decodedQuiz?.enableQuiz === true, "Lưu giữ cờ enableQuiz đúng");
+  assert(decodedQuiz?.quizPassChances === 2, "Lưu giữ số cơ hội passChances đúng");
+  assert(decodedQuiz?.gifts.length === 2, "Lưu giữ 2 mốc đúng");
+  assert(decodedQuiz?.gifts[0].quiz?.question === "Chú Cuội ngồi gốc cây gì?", "Câu hỏi mốc 1 giải mã chính xác");
+  assert(decodedQuiz?.gifts[0].quiz?.options.length === 4, "4 lựa chọn mốc 1 chính xác");
+  assert(decodedQuiz?.gifts[0].quiz?.correctIndex === 1, "Đáp án đúng mốc 1 chính xác");
+  assert(decodedQuiz?.gifts[0].message === "Chính xác! Tặng bạn một chiếc bánh nướng thập cẩm! 🥮", "Lời chúc kết hợp mốc 1 chính xác");
+  assert(decodedQuiz?.gifts[1].message === undefined, "Mốc 2 chỉ có câu hỏi (không có message)");
+
+  // 10. Kiểm tra Validation sai lệch Quiz
+  assert(
+    !validateGameConfig({
+      ...quizConfig,
+      gifts: [
+        {
+          step: 20,
+          quiz: {
+            question: "",
+            options: ["A", "B"],
+            correctIndex: 0,
+          },
+        },
+      ],
+    }),
+    "Từ chối câu hỏi trắc nghiệm có nội dung rỗng"
+  );
+
+  assert(
+    !validateGameConfig({
+      ...quizConfig,
+      gifts: [
+        {
+          step: 20,
+          quiz: {
+            question: "Đúng hay sai?",
+            options: ["Chỉ 1 đáp án"],
+            correctIndex: 0,
+          },
+        },
+      ],
+    }),
+    "Từ chối câu hỏi ít hơn 2 đáp án"
+  );
+
+  assert(
+    !validateGameConfig({
+      ...quizConfig,
+      gifts: [
+        {
+          step: 20,
+          quiz: {
+            question: "Câu đố?",
+            options: ["A", "B"],
+            correctIndex: 3, // out of range
+          },
+        },
+      ],
+    }),
+    "Từ chối câu hỏi có correctIndex vượt quá số lượng đáp án"
+  );
+
+  // 11. Kiểm tra chi tiết thông báo lỗi (validateGameConfigDetailed)
+  const detailCheck = validateGameConfigDetailed({ ...quizConfig, steps: 10 });
+  assert(
+    detailCheck.isValid === false && Boolean(detailCheck.error?.includes("20 đến 200")),
+    "Chi tiết lỗi mô tả đúng nguyên nhân"
+  );
 
   console.log("=========================================");
   console.log(`KẾT QUẢ: ${passed} Passed, ${failed} Failed`);

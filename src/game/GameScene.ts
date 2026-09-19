@@ -93,10 +93,10 @@ export class GameScene extends Phaser.Scene {
     this.updateSkyColor(0);
 
     // 2. Xây dựng 5 tầng nghệ thuật Trung Thu theo chiều cao thế giới
-    this.buildStage1Village(width, height);
+    this.buildStage1Village(width);
     this.buildStage2Rooftops(width, totalSteps, stepHeight);
     this.buildStage3Clouds(width, totalSteps, stepHeight);
-    this.buildStage4StarrySky(width, totalSteps, stepHeight, height);
+    this.buildStage4StarrySky(width, totalSteps, stepHeight);
     this.buildStage5MoonKingdom(width, totalSteps, stepHeight);
 
     // 3. Xây dựng thang tre và mốc quà
@@ -119,7 +119,7 @@ export class GameScene extends Phaser.Scene {
   /**
    * TẦNG 1: Làng Quê Đêm Hội Rước Đèn (Mặt đất - Bậc 0 -> 20%)
    */
-  private buildStage1Village(width: number, height: number) {
+  private buildStage1Village(width: number) {
     const groundContainer = this.add.container(0, 0);
 
     // Đồi cỏ xanh ban đêm
@@ -215,7 +215,7 @@ export class GameScene extends Phaser.Scene {
       roofBodyL.setStrokeStyle(2, 0x451a03);
       const ridgeL = this.add.curve(110, 25, new Phaser.Curves.Spline([110, 25, 120, 18, 125, 10]));
       const lanternL = this.createLantern(105, 52);
-      roofLeft.add([roofBodyL, lanternL]);
+      roofLeft.add([roofBodyL, ridgeL, lanternL]);
 
       // Mái ngói cong bên phải
       const roofRight = this.add.container(width, y - 100);
@@ -263,7 +263,7 @@ export class GameScene extends Phaser.Scene {
   /**
    * TẦNG 4: Bầu Trời Sao & Dải Ngân Hà (70% -> 85%)
    */
-  private buildStage4StarrySky(width: number, totalSteps: number, stepHeight: number, screenHeight: number) {
+  private buildStage4StarrySky(width: number, totalSteps: number, stepHeight: number) {
     const startY = -totalSteps * stepHeight * 0.70;
     const endY = -totalSteps * stepHeight * 0.88;
 
@@ -489,7 +489,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   /**
-   * Đặt các hộp quà tại các bậc cấu hình
+   * Đặt các hộp quà / câu hỏi thử thách tại các bậc cấu hình
    */
   private createGifts(width: number, stepHeight: number) {
     const centerX = width / 2;
@@ -498,15 +498,48 @@ export class GameScene extends Phaser.Scene {
       const giftY = -step * stepHeight;
       const giftContainer = this.add.container(centerX, giftY - 14);
 
-      const box = this.add.rectangle(0, 0, 26, 26, 0xe11d48);
-      box.setStrokeStyle(2, 0xfff1f2);
-      const ribbonH = this.add.rectangle(0, 0, 26, 6, 0xfacc15);
-      const ribbonV = this.add.rectangle(0, 0, 6, 26, 0xfacc15);
-      const bowLeft = this.add.circle(-4, -15, 5, 0xfacc15);
-      const bowRight = this.add.circle(4, -15, 5, 0xfacc15);
-      const glow = this.add.circle(0, 0, 22, 0xfde047, 0.4);
+      const hasQ = Boolean(gift.quiz);
+      const hasM = Boolean(gift.message && gift.message.trim().length > 0);
 
-      giftContainer.add([glow, box, ribbonH, ribbonV, bowLeft, bowRight]);
+      if (hasQ && !hasM) {
+        // Chỉ có câu hỏi trắc nghiệm: Khối ngọc hỏi đáp màu hổ phách vàng
+        const glow = this.add.circle(0, 0, 24, 0xf59e0b, 0.45);
+        const orb = this.add.circle(0, 0, 14, 0xd97706);
+        orb.setStrokeStyle(2, 0xfef08a);
+        const qText = this.add.text(0, 0, "?", {
+          fontSize: "16px",
+          color: "#ffffff",
+          fontStyle: "bold",
+          fontFamily: "sans-serif",
+        });
+        qText.setOrigin(0.5, 0.5);
+        giftContainer.add([glow, orb, qText]);
+      } else {
+        // Có hộp quà (hoặc kết hợp Cả Quà + Câu hỏi)
+        const boxColor = hasQ ? 0xe11d48 : 0xe11d48;
+        const box = this.add.rectangle(0, 0, 26, 26, boxColor);
+        box.setStrokeStyle(2, 0xfff1f2);
+        const ribbonH = this.add.rectangle(0, 0, 26, 6, 0xfacc15);
+        const ribbonV = this.add.rectangle(0, 0, 6, 26, 0xfacc15);
+        const bowLeft = this.add.circle(-4, -15, 5, 0xfacc15);
+        const bowRight = this.add.circle(4, -15, 5, 0xfacc15);
+        const glow = this.add.circle(0, 0, 22, 0xfde047, 0.4);
+
+        giftContainer.add([glow, box, ribbonH, ribbonV, bowLeft, bowRight]);
+
+        if (hasQ) {
+          // Huy hiệu dấu ? nhỏ ở góc trên hộp quà để biểu thị có câu đố
+          const badgeGlow = this.add.circle(12, -12, 9, 0xf59e0b);
+          badgeGlow.setStrokeStyle(1.5, 0xffffff);
+          const badgeText = this.add.text(12, -12, "?", {
+            fontSize: "11px",
+            color: "#ffffff",
+            fontStyle: "black",
+          });
+          badgeText.setOrigin(0.5, 0.5);
+          giftContainer.add([badgeGlow, badgeText]);
+        }
+      }
 
       this.tweens.add({
         targets: giftContainer,
