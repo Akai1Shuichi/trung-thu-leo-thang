@@ -23,10 +23,10 @@ Mục tiêu: Web mini-game Trung Thu không backend, chia sẻ toàn bộ cấu 
 ---
 
 ### Giai đoạn 2: Định nghĩa dữ liệu & URL Engine (Encode / Decode URL)
-- [ ] Tạo định nghĩa types (`src/types/game.ts`):
+- [x] Tạo định nghĩa types (`src/types/game.ts`):
   - `Gift { step: number; message: string; }`
   - `GameConfig { steps: number; gifts: Gift[]; finalMessage: string; ... }`
-- [ ] Xây dựng module `src/lib/gameUrl.ts`:
+- [x] Xây dựng module `src/lib/gameUrl.ts`:
   - Hàm `encodeGameConfig(config: GameConfig): string` (dùng `lz-string` `compressToEncodedURIComponent`)
   - Hàm `decodeGameConfig(data: string): GameConfig | null` (giải nén an toàn)
   - Hàm `validateGameConfig(config: unknown): config is GameConfig`:
