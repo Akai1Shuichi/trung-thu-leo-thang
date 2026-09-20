@@ -15,6 +15,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Cuội Leo Cung Trăng 🌕 | Web Mini-Game Trung Thu",
   description: "Tự tạo hành trình leo thang lên Cung Trăng, giấu những phần quà và gửi gắm lời chúc Trung Thu ấm áp đến người thân yêu!",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
 };
 
 export const viewport: Viewport = {

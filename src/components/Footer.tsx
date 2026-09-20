@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 export const COMMUNITY_LINKS = {
-  zalo: "https://zalo.me/g/2h4r4fbobrg66e9haa3q",
+  zalo: "https://zalo.me/g/b98og9ldg1rjg7uxg8pt",
   facebook: "https://www.facebook.com/groups/3488266341327505",
   credit: "Created by @botocIT",
 } as const;

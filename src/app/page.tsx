@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Gift,
@@ -52,8 +53,15 @@ export default function HomePage() {
 
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
         <Link href="/" className="focus-ring flex items-center gap-3 rounded-lg" aria-label="Cuội Leo Cung Trăng — trang chủ">
-          <span className="flex size-9 items-center justify-center rounded-full bg-gold-500 text-lg shadow-[0_0_30px_rgba(233,166,47,.28)]">
-            🌕
+          <span className="relative flex size-9 items-center justify-center overflow-hidden rounded-full border border-gold-300/40 bg-gold-500/20 shadow-[0_0_24px_rgba(233,166,47,.35)]">
+            <Image
+              src="/icon.png"
+              alt="Logo Trung Thu"
+              width={36}
+              height={36}
+              className="size-full object-cover"
+              priority
+            />
           </span>
           <span className="text-sm font-bold tracking-[0.08em] text-moon-50">CUỘI · MOON CLIMB</span>
         </Link>
