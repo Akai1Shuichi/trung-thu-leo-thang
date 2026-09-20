@@ -12,7 +12,9 @@ interface FooterProps {
 
 export function Footer({ className = "" }: FooterProps) {
   return (
-    <footer className={`w-full border-t border-white/10 bg-night-950/60 backdrop-blur-sm ${className}`}>
+    <footer
+      className={`w-full border-t border-white/10 bg-night-950/60 backdrop-blur-sm ${className}`}
+    >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-8 sm:px-8 lg:px-10">
         <div className="flex flex-col items-center justify-between gap-5 sm:flex-row">
           <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
